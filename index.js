@@ -1,10 +1,3 @@
-document.getElementById("app").innerHTML = `
-<h1>File Upload & FormData Example</h1>
-<div>
-<input type="file" id="fileInput" />
-</div>
-`;
-
 const fileInput = document.querySelector("#fileInput");
 
 const uploadFile = file => {
