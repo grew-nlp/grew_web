@@ -10,6 +10,7 @@ const uploadFile = file => {
   request.onreadystatechange = () => {
     if (request.readyState === 4 && request.status === 200) {
       console.log(request.responseText);
+      $("#reply").html (request.responseText);
     }
   };
   formData.append("file", file);
