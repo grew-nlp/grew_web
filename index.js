@@ -1,8 +1,7 @@
-const fileInput = document.querySelector("#fileInput");
 
 const uploadFile = file => {
   console.log("Uploading file...");
-  const API_ENDPOINT = "https://file.io";
+  const API_ENDPOINT = "http://localhost:8080/upload";
   const request = new XMLHttpRequest();
   const formData = new FormData();
 
@@ -12,12 +11,18 @@ const uploadFile = file => {
       console.log(request.responseText);
       $("#reply").html (request.responseText);
     }
+    else {
+      $("#reply").html ("ERROR");
+    }
   };
   formData.append("file", file);
+  formData.append("filename", "xxx");
   request.send(formData);
 };
 
-fileInput.addEventListener("change", event => {
+$("#fileInput").change (function (event)
+{
   const files = event.target.files;
+  console.log("tagada"+files.length);
   uploadFile(files[0]);
-});
+})
