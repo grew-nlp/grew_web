@@ -1,4 +1,6 @@
-// Add the following code if you want the name of the file appear on select
+
+
+// update of the file selector content
 $(".custom-file-input").on("change", function() {
   var fileName = $(this).val().split("\\").pop();
   $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
@@ -34,13 +36,11 @@ const uploadFile = file => {
     }
   };
   formData.append("file", file);
-  formData.append("filename", "xxx");
   request.send(formData);
 };
 
 $("#fileInput").change (function (event)
 {
   const files = event.target.files;
-  console.log("tagada"+files.length);
   uploadFile(files[0]);
 })
