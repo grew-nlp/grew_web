@@ -1,3 +1,20 @@
+// Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+
+
+
+
+var myObject = new Vue({
+  el: '#app',
+  data: {message: 'Hello Vue!'}
+})
+
+
+
+
 
 const uploadFile = file => {
   console.log("Uploading file...");
@@ -10,6 +27,7 @@ const uploadFile = file => {
     if (request.readyState === 4 && request.status === 200) {
       console.log(request.responseText);
       $("#reply").html (request.responseText);
+       myObject.message = "John Doe";
     }
     else {
       $("#reply").html ("ERROR");
