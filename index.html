@@ -42,41 +42,8 @@
               <h3>{{ corpus }}</h3>
             </li>
             <li class="nav-item" v-for="sent_id in sent_ids">
-              <a v-bind:id="sent_id" v-on:click="toto" class="sent nav-link" href="#">
+              <a v-bind:id="sent_id" v-on:click="select_graph" class="sent nav-link" href="#">
                 {{ sent_id }}
-              </a>
-            </li>
-          </ul>
-
-          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Saved reports</span>
-            <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
-              <span data-feather="plus-circle"></span>
-            </a>
-          </h6>
-          <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file-text"></span>
-                Current month
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file-text"></span>
-                Last quarter
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file-text"></span>
-                Social engagement
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <span data-feather="file-text"></span>
-                Year-end sale
               </a>
             </li>
           </ul>
@@ -89,10 +56,6 @@
         <div id="display-svg">
           <object id="result-pic" type="image/svg+xml" class="logo" data="img/6.svg"></object>
         </div>
-        <div id="reply">
-        </div>
-
-        <h1>{{ message }}</h1>
       </div>
     </div>
   </div>
