@@ -7,9 +7,33 @@ var current = new Vue({
   methods: {
     select_graph: function(event) {
       console.log("[select_graph] " + event.target.id);
+      change_graph(event.target.id);
     }
   }
 })
+
+function change_graph(sent_id) {
+  console.log("change_graph: " + sent_id);
+
+  var form = new FormData();
+  form.append("sent_id", sent_id);
+
+  var settings = {
+    "url": "http://localhost:8080/save_pict",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+  });
+
+
+}
 
 
 
