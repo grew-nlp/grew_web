@@ -2,7 +2,8 @@ var current = new Vue({
   el: '#app',
   data: {
     corpus: 'No corpus loaded',
-    sent_ids: []
+    sent_ids: [],
+    image: ""
   },
   methods: {
     select_graph: function(event) {
@@ -28,6 +29,12 @@ function change_graph(sent_id) {
 
   $.ajax(settings).done(function(response) {
     console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR, file " + file.name + "] " + resp.message.message);
+    } else {
+      current.image = resp.data;
+    }
   });
 }
 
@@ -55,11 +62,6 @@ function upload_file(file) {
     }
   });
 }
-
-
-
-
-
 
 // Binding on fileInput
 $("#fileInput").change(function(event) {
