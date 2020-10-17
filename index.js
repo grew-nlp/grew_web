@@ -5,6 +5,7 @@ var current = new Vue({
   data: {
     corpus: 'No corpus loaded',
     grs: 'No GRS loaded',
+    strats: ["fak1", "fak2"],
     sent_ids: [],
     image: ""
   },
@@ -12,9 +13,14 @@ var current = new Vue({
     select_graph: function(event) {
       console.log("[select_graph] " + event.target.id);
       change_graph(event.target.id);
+    },
+    apply_strat: function(event) {
+      console.log("[apply_strat] " + event.target.id);
+      //change_graph(event.target.id);
     }
   }
 })
+
 
 function change_graph(sent_id) {
   var form = new FormData();
@@ -95,6 +101,7 @@ function upload_grs(file) {
       alert("[ERROR, file " + file.name + "] " + resp.message);
     } else {
       current.grs = file.name;
+      current.strats = resp.data;
     }
   });
 }
