@@ -1,7 +1,10 @@
+Vue.config.devtools = true
+
 var current = new Vue({
   el: '#app',
   data: {
     corpus: 'No corpus loaded',
+    grs: 'No GRS loaded',
     sent_ids: [],
     image: ""
   },
@@ -31,19 +34,19 @@ function change_graph(sent_id) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      alert("[ERROR, file " + file.name + "] " + resp.message.message);
+      alert("[ERROR in change_graph. sent_id " + sent_id + "] " + resp.message);
     } else {
       current.image = resp.data;
     }
   });
 }
 
-function upload_file(file) {
+function upload_corpus(file) {
   var form = new FormData();
-  form.append("file", fileInput.files[0], file);
+  form.append("file", corpus_input.files[0], file);
 
   var settings = {
-    "url": "http://localhost:8080/upload",
+    "url": "http://localhost:8080/upload_corpus",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -58,13 +61,46 @@ function upload_file(file) {
     if (resp.status === "ERROR") {
       alert("[ERROR, file " + file.name + "] " + resp.message.message);
     } else {
+      current.corpus = file.name;
       current.sent_ids = resp.data.sent_ids;
     }
   });
 }
 
-// Binding on fileInput
-$("#fileInput").change(function(event) {
+// Binding on corpus_input
+$("#corpus_input").change(function(event) {
   const files = event.target.files;
-  upload_file(files[0]);
+  upload_corpus(files[0]);
+})
+
+
+function upload_grs(file) {
+  var form = new FormData();
+  form.append("file", grs_input.files[0], file);
+
+  var settings = {
+    "url": "http://localhost:8080/upload_grs",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR, file " + file.name + "] " + resp.message);
+    } else {
+      current.grs = file.name;
+    }
+  });
+}
+
+// Binding on grs_input
+$("#grs_input").change(function(event) {
+  const files = event.target.files;
+  upload_grs(files[0]);
 })

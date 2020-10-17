@@ -18,23 +18,34 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-sm fixed-top">
-    <img aria-hidden="true" role="presentation" src="img/grew.svg" id="logo">
-    <ul class="navbar-nav">
-      <!-- <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li> -->
-      <div class="custom-file">
-        <input type="file" class="custom-file-input" id="fileInput">
-        <label class="custom-file-label" for="customFile">Choose a corpus file</label>
-      </div>
-    </ul>
-  </nav>
+  <div id="app">
+    <nav class="navbar navbar-expand-sm fixed-top">
+      <img aria-hidden="true" role="presentation" src="img/grew.svg" id="logo">
+      <ul class="navbar-nav">
+        <li>
+          <h3>Corpus:</h3>
+        </li>
+        <li>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="corpus_input">
+            <label class="custom-file-label">{{ corpus }}</label>
+          </div>
+        </li>
+        <li>
+          <h3>GRS:</h3>
+        </li>
+        <li>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="grs_input">
+            <label class="custom-file-label">{{ grs }}</label>
+          </div>
+        </li>
+      </ul>
+    </nav>
 
 
 
-  <div class="container-fluid">
-    <div id="app" class="row">
+    <div class="wrapper">
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
         <div class="sidebar-sticky pt-3">
           <ul class="nav flex-column">

@@ -1,8 +1,20 @@
+/* -------------------- Navbar -------------------- */
 
+.navbar {
+  background-color: #ffe9a7;
+}
 
-/*
- * Sidebar
- */
+#logo {
+  height: 40px;
+  margin-right: 30px;
+}
+
+.navbar-nav > li {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/* -------------------- Sidebar -------------------- */
 
 .sidebar {
   position: fixed;
@@ -11,7 +23,6 @@
   left: 0;
   z-index: 100; /* Behind the navbar */
   padding: 56px 0 0; /* Height of navbar */
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }
 
 .sidebar-sticky {
@@ -34,32 +45,8 @@
   color: #333;
 }
 
-.sidebar .nav-link .feather {
-  margin-right: 4px;
-  color: #999;
-}
 
-/*
- * Navbar
- */
-
-
-.navbar .form-control {
-  padding: .75rem 1rem;
-  border-width: 0;
-  border-radius: 0;
-}
-
-
-.navbar {
-  background-color: #DEF;
-}
-
-#logo {
-  height: 40px;
-  margin-right: 30px;
-}
-
+/* -------------------- main -------------------- */
 #main {
   padding: 56px 0 0; /* Height of navbar */
 }
