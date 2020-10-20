@@ -7,45 +7,21 @@ var current = new Vue({
     grs: 'No GRS loaded',
     strats: ["fak1", "fak2"],
     sent_ids: [],
-    image: ""
+    normal_forms: [],
+    rules: ["1::rule1", "2::rule2"],
+    svg_init: "",
+    svg_final: "",
+    svg_before: "",
+    svg_after: "",
   },
-  methods: {
-    select_graph: function(event) {
-      console.log("[select_graph] " + event.target.id);
-      change_graph(event.target.id);
-    },
-    apply_strat: function(event) {
-      console.log("[apply_strat] " + event.target.id);
-      //change_graph(event.target.id);
-    }
-  }
+  methods: {}
 })
 
-
-function change_graph(sent_id) {
-  var form = new FormData();
-  form.append("sent_id", sent_id);
-
-  var settings = {
-    "url": "http://localhost:8080/save_pict",
-    "method": "POST",
-    "timeout": 0,
-    "processData": false,
-    "mimeType": "multipart/form-data",
-    "contentType": false,
-    "data": form
-  };
-
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      alert("[ERROR in change_graph. sent_id " + sent_id + "] " + resp.message);
-    } else {
-      current.image = resp.data;
-    }
-  });
-}
+// ====================================================================================================
+$("#corpus_input").change(function(event) {
+  const files = event.target.files;
+  upload_corpus(files[0]);
+})
 
 function upload_corpus(file) {
   var form = new FormData();
@@ -73,12 +49,12 @@ function upload_corpus(file) {
   });
 }
 
-// Binding on corpus_input
-$("#corpus_input").change(function(event) {
+// ====================================================================================================
+// Binding on grs_input
+$("#grs_input").change(function(event) {
   const files = event.target.files;
-  upload_corpus(files[0]);
+  upload_grs(files[0]);
 })
-
 
 function upload_grs(file) {
   var form = new FormData();
@@ -106,8 +82,150 @@ function upload_grs(file) {
   });
 }
 
-// Binding on grs_input
-$("#grs_input").change(function(event) {
-  const files = event.target.files;
-  upload_grs(files[0]);
-})
+// ====================================================================================================
+function select_graph(event) {
+  const sent_id = event.target.id;
+  console.log("[select_graph] " + sent_id);
+
+  var form = new FormData();
+  form.append("sent_id", sent_id);
+
+  var settings = {
+    "url": "http://localhost:8080/select_graph",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR in change_graph. sent_id " + sent_id + "] " + resp.message);
+    } else {
+      current.svg_init = resp.data;
+    }
+  });
+}
+
+// ====================================================================================================
+function rewrite(event) {
+  const strat = event.target.id.slice(6) // remove the prefix "strat-"
+  console.log("[rewrite] " + strat);
+
+  var form = new FormData();
+  form.append("strat", strat);
+
+  var settings = {
+    "url": "http://localhost:8080/rewrite",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR in rewrite strat " + strat + "] " + resp.message);
+    } else {
+      current.normal_forms = [];
+      console.log(resp);
+      for (var i = 0; i < resp.data; i++) {
+        current.normal_forms.push("G_" + i);
+      }
+      $("#button-rewriting").click();
+    }
+  });
+}
+
+// ====================================================================================================
+function select_normal_form(event) {
+  const position = event.target.id.slice(2);
+  console.log("[select_normal_form] " + position);
+
+  var form = new FormData();
+  form.append("position", position);
+
+  var settings = {
+    "url": "http://localhost:8080/select_normal_form",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR in select_normal_form. position " + position + "] " + resp.message);
+    } else {
+      current.svg_final = resp.data;
+    }
+  });
+
+}
+
+// ====================================================================================================
+function select_rule(event) {
+  const position = event.target.id.split("::")[0];
+  console.log("[select_rule] " + position);
+  var form = new FormData();
+  form.append("position", position);
+
+  var settings = {
+    "url": "http://localhost:8080/select_rule",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR in select_rule. position " + position + "] " + resp.message);
+    } else {
+      current.svg_before = resp.data.before;
+      current.svg_after = resp.data.after;
+    }
+  });
+}
+
+// ====================================================================================================
+function get_rules(event) {
+  var form = new FormData();
+
+  var settings = {
+    "url": "http://localhost:8080/rules",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR in rules] " + resp.message);
+    } else {
+      current.rules = resp.data;
+      $("#button-rules").click();
+    }
+  });
+}
