@@ -23,9 +23,15 @@
       <img aria-hidden="true" role="presentation" src="img/grew.svg" id="logo">
 
       <ul class="nav nav-pills">
-        <li class="active"><button class="btn btn-success btn-sm" data-toggle="pill" href="#pill-corpus">Corpus</button></li>
-        <li><button id="button-rewriting" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rewriting">Rewriting</button></li>
-        <li><button id="button-rules" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rules">Rules</button></li>
+        <li class="active">
+          <button id="button-corpus" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-corpus">Corpus</button>
+        </li>
+        <li>
+          <button id="button-rewriting" v-bind:class="{ disabled: !enable_rewriting }" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rewriting">Rewriting</button>
+        </li>
+        <li>
+          <button id="button-rules" v-bind:class="{ disabled: !enable_rules}" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rules">Rules</button>
+        </li>
       </ul>
 
       <ul class="navbar-nav">
@@ -73,12 +79,12 @@
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
-            Strategies:
-            <button v-for="strat in strats" v-bind:id="'strat-' + strat" v-on:click="rewrite" type="button" class="btn btn-primary">{{ strat }}</button>
-
             <div id="display-svg">
               <object type="image/svg+xml" class="logo" v-bind:data="svg_init"></object>
             </div>
+
+            <button v-for="strat in strats" v-bind:id="'strat-' + strat" v-on:click="rewrite" type="button" class="btn btn-success">{{ strat }}</button>
+
           </div>
         </div>
 
@@ -110,7 +116,7 @@
             </div>
 
             <p class="text-center" style="font-size:80px">
-              ↓<button id="button-rewriting" v-on:click="get_rules" class="btn btn-success btn-lg">Rules</button>↓
+              ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See rules</button>↓
             </p>
 
             <div id="display-svg">

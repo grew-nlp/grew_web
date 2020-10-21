@@ -5,20 +5,47 @@ var current = new Vue({
   data: {
     corpus: 'No corpus loaded',
     grs: 'No GRS loaded',
-    strats: ["fak1", "fak2"],
+
+    strats: [],
+
     sent_ids: [],
+
+    enable_rewriting: false,
     normal_forms: [],
-    rules: ["1-rule1", "2-rule2"],
+
+    enable_rules: false,
+    rules: [],
+
     svg_init: "",
     svg_final: "",
     svg_before: "",
     svg_after: "",
   },
-  methods: {}
+  methods: {
+  }
 })
+
+function clean_corpus () {
+  $('#pill-corpus .nav-item').removeClass('selected');
+  current.svg_init = "";
+}
+
+function clean_rewriting () {
+  current.enable_rewriting = false;
+  current.normal_forms = [];
+  current.svg_final = "";
+}
+
+function clean_rules () {
+  current.enable_rules = false;
+  current.rules = [];
+  current.svg_before = "";
+  current.svg_after = "";
+}
 
 // ====================================================================================================
 $("#corpus_input").change(function(event) {
+  clean_corpus ();
   const files = event.target.files;
   upload_corpus(files[0]);
 })
@@ -84,6 +111,10 @@ function upload_grs(file) {
 
 // ====================================================================================================
 function select_graph(event) {
+
+  clean_rewriting();
+  clean_rules ();
+
   const sent_id = event.target.id;
   console.log("[select_graph] " + sent_id);
 
@@ -116,6 +147,7 @@ function select_graph(event) {
 
 // ====================================================================================================
 function rewrite(event) {
+  current.enable_rewriting = true;
   const strat = event.target.id.slice(6) // remove the prefix "strat-"
   console.log("[rewrite] " + strat);
 
@@ -150,6 +182,8 @@ function rewrite(event) {
 
 // ====================================================================================================
 function select_normal_form(event) {
+
+  clean_rules();
   const position = event.target.id.slice(2);
   console.log("[select_normal_form] " + position);
 
@@ -217,6 +251,7 @@ function select_rule(event) {
 
 // ====================================================================================================
 function get_rules(event) {
+  current.enable_rules = true;
   var form = new FormData();
 
   var settings = {
