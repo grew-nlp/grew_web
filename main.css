@@ -45,6 +45,10 @@
   color: #333;
 }
 
+.selected {
+  background-color: #8bf56e;
+}
+
 
 /* -------------------- main -------------------- */
 .main {

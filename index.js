@@ -8,7 +8,7 @@ var current = new Vue({
     strats: ["fak1", "fak2"],
     sent_ids: [],
     normal_forms: [],
-    rules: ["1::rule1", "2::rule2"],
+    rules: ["1-rule1", "2-rule2"],
     svg_init: "",
     svg_final: "",
     svg_before: "",
@@ -87,6 +87,9 @@ function select_graph(event) {
   const sent_id = event.target.id;
   console.log("[select_graph] " + sent_id);
 
+  $('#pill-corpus .nav-item').removeClass('selected');
+  $("#"+sent_id).parent().addClass("selected");
+
   var form = new FormData();
   form.append("sent_id", sent_id);
 
@@ -150,6 +153,9 @@ function select_normal_form(event) {
   const position = event.target.id.slice(2);
   console.log("[select_normal_form] " + position);
 
+  $('#pill-rewriting .nav-item').removeClass('selected');
+  $("#"+event.target.id).parent().addClass("selected");
+
   var form = new FormData();
   form.append("position", position);
 
@@ -177,8 +183,13 @@ function select_normal_form(event) {
 
 // ====================================================================================================
 function select_rule(event) {
-  const position = event.target.id.split("::")[0];
+  const position = event.target.id.split("-")[0];
   console.log("[select_rule] " + position);
+
+  $('#pill-rules .nav-item').removeClass('selected');
+  // jquery selector does not work because of the dot usage in rule names (stackoverflow.com/questions/605630)
+  $(document.getElementById(event.target.id)).parent().addClass("selected");
+
   var form = new FormData();
   form.append("position", position);
 
