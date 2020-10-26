@@ -3,14 +3,14 @@ Vue.config.devtools = true
 var current = new Vue({
   el: '#app',
   data: {
-    corpus: 'No corpus loaded',
     grs: 'No GRS loaded',
-
     strats: [],
 
+    corpus: 'No corpus loaded',
     sent_ids: [],
 
-    enable_rewriting: false,
+    level: 0,
+
     normal_forms: [],
 
     enable_rules: false,
@@ -21,31 +21,29 @@ var current = new Vue({
     svg_before: "",
     svg_after: "",
   },
-  methods: {
-  }
+  methods: {}
 })
 
-function clean_corpus () {
-  $('#pill-corpus .nav-item').removeClass('selected');
-  current.svg_init = "";
-}
+function set_level(level) {
+  current.level = level;
 
-function clean_rewriting () {
-  current.enable_rewriting = false;
-  current.normal_forms = [];
-  current.svg_final = "";
-}
-
-function clean_rules () {
-  current.enable_rules = false;
-  current.rules = [];
-  current.svg_before = "";
-  current.svg_after = "";
+  if (level < 2) {
+    $('#pill-corpus .nav-item').removeClass('selected');
+    current.svg_init = "";
+  }
+  if (level < 3) {
+    current.normal_forms = [];
+    current.svg_final = "";
+  }
+  if (level < 5) {
+    current.rules = [];
+    current.svg_before = "";
+    current.svg_after = "";
+  }
 }
 
 // ====================================================================================================
 $("#corpus_input").change(function(event) {
-  clean_corpus ();
   const files = event.target.files;
   upload_corpus(files[0]);
 })
@@ -70,6 +68,7 @@ function upload_corpus(file) {
     if (resp.status === "ERROR") {
       alert("[ERROR, file " + file.name + "] " + resp.message.message);
     } else {
+      set_level(1);
       current.corpus = file.name;
       current.sent_ids = resp.data.sent_ids;
     }
@@ -111,15 +110,12 @@ function upload_grs(file) {
 
 // ====================================================================================================
 function select_graph(event) {
-
-  clean_rewriting();
-  clean_rules ();
-
+  set_level(2);
   const sent_id = event.target.id;
   console.log("[select_graph] " + sent_id);
 
   $('#pill-corpus .nav-item').removeClass('selected');
-  $("#"+sent_id).parent().addClass("selected");
+  $("#" + sent_id).parent().addClass("selected");
 
   var form = new FormData();
   form.append("sent_id", sent_id);
@@ -147,48 +143,49 @@ function select_graph(event) {
 
 // ====================================================================================================
 function rewrite(event) {
-  current.enable_rewriting = true;
-  const strat = event.target.id.slice(6) // remove the prefix "strat-"
-  console.log("[rewrite] " + strat);
+  if (current.level >= 2) {
+    set_level(3);
+    const strat = event.target.id.slice(6) // remove the prefix "strat-"
+    console.log("[rewrite] " + strat);
 
-  var form = new FormData();
-  form.append("strat", strat);
+    var form = new FormData();
+    form.append("strat", strat);
 
-  var settings = {
-    "url": "http://localhost:8080/rewrite",
-    "method": "POST",
-    "timeout": 0,
-    "processData": false,
-    "mimeType": "multipart/form-data",
-    "contentType": false,
-    "data": form
-  };
+    var settings = {
+      "url": "http://localhost:8080/rewrite",
+      "method": "POST",
+      "timeout": 0,
+      "processData": false,
+      "mimeType": "multipart/form-data",
+      "contentType": false,
+      "data": form
+    };
 
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      alert("[ERROR in rewrite strat " + strat + "] " + resp.message);
-    } else {
-      current.normal_forms = [];
-      console.log(resp);
-      for (var i = 0; i < resp.data; i++) {
-        current.normal_forms.push("G_" + i);
+    $.ajax(settings).done(function(response) {
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        alert("[ERROR in rewrite strat " + strat + "] " + resp.message);
+      } else {
+        current.normal_forms = [];
+        console.log(resp);
+        for (var i = 0; i < resp.data; i++) {
+          current.normal_forms.push("G_" + i);
+        }
+        $("#button-rewriting").click();
       }
-      $("#button-rewriting").click();
-    }
-  });
+    });
+  }
 }
 
 // ====================================================================================================
 function select_normal_form(event) {
-
-  clean_rules();
+  set_level(4);
   const position = event.target.id.slice(2);
   console.log("[select_normal_form] " + position);
 
   $('#pill-rewriting .nav-item').removeClass('selected');
-  $("#"+event.target.id).parent().addClass("selected");
+  $("#" + event.target.id).parent().addClass("selected");
 
   var form = new FormData();
   form.append("position", position);
@@ -216,7 +213,35 @@ function select_normal_form(event) {
 }
 
 // ====================================================================================================
+function get_rules(event) {
+  set_level(5);
+  // current.enable_rules = true;
+  var form = new FormData();
+
+  var settings = {
+    "url": "http://localhost:8080/rules",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR in rules] " + resp.message);
+    } else {
+      current.rules = resp.data;
+      $("#button-rules").click();
+    }
+  });
+}
+// ====================================================================================================
 function select_rule(event) {
+  set_level(6);
   const position = event.target.id.split("-")[0];
   console.log("[select_rule] " + position);
 
@@ -249,29 +274,3 @@ function select_rule(event) {
   });
 }
 
-// ====================================================================================================
-function get_rules(event) {
-  current.enable_rules = true;
-  var form = new FormData();
-
-  var settings = {
-    "url": "http://localhost:8080/rules",
-    "method": "POST",
-    "timeout": 0,
-    "processData": false,
-    "mimeType": "multipart/form-data",
-    "contentType": false,
-    "data": form
-  };
-
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      alert("[ERROR in rules] " + resp.message);
-    } else {
-      current.rules = resp.data;
-      $("#button-rules").click();
-    }
-  });
-}
