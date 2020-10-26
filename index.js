@@ -115,7 +115,7 @@ function upload_grs(file) {
 // ====================================================================================================
 function select_graph_event(event) {
   const sent_id = event.target.id;
-  select_graph (sent_id);
+  select_graph(sent_id);
 }
 
 // ====================================================================================================
@@ -198,7 +198,7 @@ function rewrite(event) {
 // ====================================================================================================
 function select_normal_form_event(event) {
   const position = event.target.id.slice(2);
-  select_normal_form (position);
+  select_normal_form(position);
 }
 
 // ====================================================================================================
@@ -303,4 +303,53 @@ function select_rule(position) {
       current.svg_after = resp.data.after;
     }
   });
+}
+
+syncScroll($('#svg_init'), $('#svg_final'));
+syncScroll($('#svg_before'), $('#svg_after'));
+
+
+/***
+*   Synchronize Scroll
+*   Synchronizes the horizontal scrolling of two elements.
+*   The elements can have different content widths.
+*
+*   @param $el1 {Object}
+*       Native DOM element or jQuery selector.
+*       First element to sync.
+*   @param $el2 {Object}
+*       Native DOM element or jQuery selector.
+*       Second element to sync.
+*
+*  adapted from https://stackoverflow.com/questions/18952623/synchronized-scrolling-using-jquery#answer-27007581
+*
+*/
+function syncScroll(el1, el2) {
+  var $el1 = $(el1);
+  var $el2 = $(el2);
+
+  // Lets us know when a scroll is organic
+  // or forced from the synced element.
+  var forcedScroll = false;
+
+  // Catch our elements' scroll events and
+  // syncronize the related element.
+  $el1.scroll(function() { performScroll($el1, $el2); });
+  $el2.scroll(function() { performScroll($el2, $el1); });
+
+  // Perform the scroll of the synced element
+  // based on the scrolled element.
+  function performScroll($scrolled, $toScroll) {
+    if (forcedScroll) return (forcedScroll = false);
+    var percent = ($scrolled.scrollLeft() / ($scrolled[0].scrollWidth - $scrolled.outerWidth())) * 100;
+    setScrollLeftFromPercent($toScroll, percent);
+  }
+
+  // Scroll to a position in the given
+  // element based on a percent.
+  function setScrollLeftFromPercent($el, percent) {
+    var scrollLeftPos = (percent / 100) * ($el[0].scrollWidth - $el.outerWidth());
+    forcedScroll = true;
+    $el.scrollLeft(scrollLeftPos);
+  }
 }

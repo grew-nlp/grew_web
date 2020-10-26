@@ -81,7 +81,7 @@
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
-            <div id="display-svg">
+            <div class="display-svg">
               <object type="image/svg+xml" class="logo" v-bind:data="svg_init"></object>
             </div>
 
@@ -113,7 +113,7 @@
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
-            <div id="display-svg">
+            <div id="svg_init" class="display-svg">
               <object type="image/svg+xml" class="logo" v-bind:data="svg_init"></object>
             </div>
 
@@ -121,7 +121,7 @@
               ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See rules</button>↓
             </p>
 
-            <div id="display-svg">
+            <div id="svg_final" class="display-svg">
               <object type="image/svg+xml" class="logo" v-bind:data="svg_final"></object>
             </div>
           </div>
@@ -150,13 +150,13 @@
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
-            <div id="display-svg">
+            <div id="svg_before" class="display-svg">
               <object type="image/svg+xml" class="logo" v-bind:data="svg_before"></object>
             </div>
 
             <p class="text-center" style="font-size:100px">↓</p>
 
-            <div id="display-svg">
+            <div id="svg_after" class="display-svg">
               <object type="image/svg+xml" class="logo" v-bind:data="svg_after"></object>
             </div>
           </div>
