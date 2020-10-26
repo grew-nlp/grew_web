@@ -24,6 +24,7 @@ var current = new Vue({
   methods: {}
 })
 
+// ====================================================================================================
 function set_level(level) {
   current.level = level;
 
@@ -31,7 +32,7 @@ function set_level(level) {
     $('#pill-corpus .nav-item').removeClass('selected');
     current.svg_init = "";
   }
-  if (level < 3) {
+  if (level < 4) {
     current.normal_forms = [];
     current.svg_final = "";
   }
@@ -169,10 +170,14 @@ function rewrite(event) {
       } else {
         current.normal_forms = [];
         console.log(resp);
-        for (var i = 0; i < resp.data; i++) {
-          current.normal_forms.push("G_" + i);
+        if (resp.data == 0) {
+          alert("No graph produced");
+        } else {
+          for (var i = 0; i < resp.data; i++) {
+            current.normal_forms.push("G_" + i);
+          }
+          $("#button-rewriting").click();
         }
-        $("#button-rewriting").click();
       }
     });
   }
@@ -273,4 +278,3 @@ function select_rule(event) {
     }
   });
 }
-
