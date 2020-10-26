@@ -71,7 +71,7 @@
                   <h3>{{sent_ids.length}} graph<span v-show="sent_ids.length > 1" >s</span></h3>
                 </li>
                 <li class="nav-item" v-for="sent_id in sent_ids">
-                  <a v-bind:id="sent_id" v-on:click="select_graph" class="sent nav-link" href="#">
+                  <a v-bind:id="sent_id" v-bind:class="{ selected: sent_ids.length == 1 }" v-on:click="select_graph_event" class="sent nav-link" href="#">
                     {{ sent_id }}
                   </a>
                 </li>
@@ -103,7 +103,7 @@
                   <h3>{{normal_forms.length}} Normal form<span v-show="normal_forms.length > 1" >s</span></h3>
                 </li>
                 <li class="nav-item" v-for="normal_form in normal_forms">
-                  <a v-bind:id="normal_form" v-on:click="select_normal_form" class="sent nav-link" href="#">
+                  <a v-bind:id="normal_form" v-bind:class="{ selected: normal_forms.length == 1 }" v-on:click="select_normal_form_event" class="sent nav-link" href="#">
                     {{ normal_form }}
                   </a>
                 </li>
@@ -140,7 +140,7 @@
                   <h3>{{rules.length}} rule<span v-show="rules.length > 1" >s</span></h3>
                 </li>
                 <li class="nav-item" v-for="rule in rules">
-                  <a v-bind:id="rule" v-on:click="select_rule" class="sent nav-link" href="#">
+                  <a v-bind:id="rule" v-bind:class="{ selected: rules.length == 1 }" v-on:click="select_rule_event" class="sent nav-link" href="#">
                     {{ rule }}
                   </a>
                 </li>

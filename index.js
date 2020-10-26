@@ -72,6 +72,9 @@ function upload_corpus(file) {
       set_level(1);
       current.corpus = file.name;
       current.sent_ids = resp.data.sent_ids;
+      if (resp.data.sent_ids.length == 1) {
+        select_graph(resp.data.sent_ids[0])
+      }
     }
   });
 }
@@ -110,9 +113,14 @@ function upload_grs(file) {
 }
 
 // ====================================================================================================
-function select_graph(event) {
-  set_level(2);
+function select_graph_event(event) {
   const sent_id = event.target.id;
+  select_graph (sent_id);
+}
+
+// ====================================================================================================
+function select_graph(sent_id) {
+  set_level(2);
   console.log("[select_graph] " + sent_id);
 
   $('#pill-corpus .nav-item').removeClass('selected');
@@ -172,6 +180,10 @@ function rewrite(event) {
         console.log(resp);
         if (resp.data == 0) {
           alert("No graph produced");
+        } else if (resp.data == 1) {
+          current.normal_forms = ["G_0"];
+          $("#button-rewriting").click();
+          select_normal_form(0);
         } else {
           for (var i = 0; i < resp.data; i++) {
             current.normal_forms.push("G_" + i);
@@ -184,10 +196,15 @@ function rewrite(event) {
 }
 
 // ====================================================================================================
-function select_normal_form(event) {
-  set_level(4);
+function select_normal_form_event(event) {
   const position = event.target.id.slice(2);
+  select_normal_form (position);
+}
+
+// ====================================================================================================
+function select_normal_form(position) {
   console.log("[select_normal_form] " + position);
+  set_level(4);
 
   $('#pill-rewriting .nav-item').removeClass('selected');
   $("#" + event.target.id).parent().addClass("selected");
@@ -241,13 +258,22 @@ function get_rules(event) {
     } else {
       current.rules = resp.data;
       $("#button-rules").click();
+      if (resp.data.length == 1) {
+        select_rule(1);
+      }
     }
   });
 }
+
 // ====================================================================================================
-function select_rule(event) {
-  set_level(6);
+function select_rule_event(event) {
   const position = event.target.id.split("-")[0];
+  select_rule(position)
+}
+
+// ====================================================================================================
+function select_rule(position) {
+  set_level(6);
   console.log("[select_rule] " + position);
 
   $('#pill-rules .nav-item').removeClass('selected');
