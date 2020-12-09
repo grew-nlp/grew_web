@@ -3,6 +3,7 @@ Vue.config.devtools = true
 var current = new Vue({
   el: '#app',
   data: {
+    id: "Not connected",
     grs: 'No GRS loaded',
     strats: [],
 
@@ -23,6 +24,38 @@ var current = new Vue({
   },
   methods: {}
 })
+
+$(document).ready(function() {
+  connect();
+});
+
+// ====================================================================================================
+function connect() {
+  var form = new FormData();
+  var settings = {
+    "url": "http://localhost:8080/connect",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      alert("[ERROR, file " + file.name + "] " + resp.message.message);
+    } else {
+      current.id = resp.data;
+    }
+  })
+  .fail(function () {
+    swal("Connection fail", "The grew_back service is not available.", "error");
+  });
+}
+
 
 // ====================================================================================================
 function set_level(level) {
