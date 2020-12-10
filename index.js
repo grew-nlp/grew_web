@@ -3,7 +3,7 @@ Vue.config.devtools = true
 var current = new Vue({
   el: '#app',
   data: {
-    id: "Not connected",
+    session_id: "Not connected",
     grs: 'No GRS loaded',
     strats: [],
 
@@ -43,17 +43,17 @@ function connect() {
   };
 
   $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      alert("[ERROR, file " + file.name + "] " + resp.message.message);
-    } else {
-      current.id = resp.data;
-    }
-  })
-  .fail(function () {
-    swal("Connection fail", "The grew_back service is not available.", "error");
-  });
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("[ERROR, file " + file.name + "] " + resp.message.message, "error");
+      } else {
+        current.session_id = resp.data;
+      }
+    })
+    .fail(function() {
+      swal("Connection fail", "The grew_back service is not available.", "error");
+    });
 }
 
 
@@ -76,6 +76,13 @@ function set_level(level) {
   }
 }
 
+
+// ====================================================================================================
+$('#dep_graph').change(function() {
+  swal("new stat" + $(this).prop('checked'), "error")
+})
+
+
 // ====================================================================================================
 $("#corpus_input").change(function(event) {
   const files = event.target.files;
@@ -84,6 +91,7 @@ $("#corpus_input").change(function(event) {
 
 function upload_corpus(file) {
   var form = new FormData();
+  form.append("session_id", current.session_id);
   form.append("file", corpus_input.files[0], file);
 
   var settings = {
@@ -100,7 +108,13 @@ function upload_corpus(file) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      alert("[ERROR, file " + file.name + "] " + resp.message.message);
+      // swal("[ERROR, file " + file.name + "] " + resp.message, "error");
+      // swal("XXX", "error");
+      swal({
+        text: "[ERROR, file " + file.name + "] " + resp.message,
+        icon: "error",
+      });
+
     } else {
       set_level(1);
       current.corpus = file.name;
@@ -121,7 +135,9 @@ $("#grs_input").change(function(event) {
 
 function upload_grs(file) {
   var form = new FormData();
+  form.append("session_id", current.session_id);
   form.append("file", grs_input.files[0], file);
+
 
   var settings = {
     "url": "http://localhost:8080/upload_grs",
@@ -137,7 +153,7 @@ function upload_grs(file) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      alert("[ERROR, file " + file.name + "] " + resp.message);
+      swal("[ERROR, file " + file.name + "] " + resp.message, "error");
     } else {
       current.grs = file.name;
       current.strats = resp.data;
@@ -160,6 +176,7 @@ function select_graph(sent_id) {
   $("#" + sent_id).parent().addClass("selected");
 
   var form = new FormData();
+  form.append("session_id", current.session_id);
   form.append("sent_id", sent_id);
 
   var settings = {
@@ -176,7 +193,7 @@ function select_graph(sent_id) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      alert("[ERROR in change_graph. sent_id " + sent_id + "] " + resp.message);
+      swal("[ERROR in change_graph. sent_id " + sent_id + "] " + resp.message, "error");
     } else {
       current.svg_init = resp.data;
     }
@@ -191,6 +208,7 @@ function rewrite(event) {
     console.log("[rewrite] " + strat);
 
     var form = new FormData();
+    form.append("session_id", current.session_id);
     form.append("strat", strat);
 
     var settings = {
@@ -207,12 +225,12 @@ function rewrite(event) {
       console.log(response);
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
-        alert("[ERROR in rewrite strat " + strat + "] " + resp.message);
+        swal("[ERROR in rewrite strat " + strat + "] " + resp.message, "error");
       } else {
         current.normal_forms = [];
         console.log(resp);
         if (resp.data == 0) {
-          alert("No graph produced");
+          swal("No graph produced", "error");
         } else if (resp.data == 1) {
           current.normal_forms = ["G_0"];
           $("#button-rewriting").click();
@@ -243,6 +261,7 @@ function select_normal_form(position) {
   $("#" + event.target.id).parent().addClass("selected");
 
   var form = new FormData();
+  form.append("session_id", current.session_id);
   form.append("position", position);
 
   var settings = {
@@ -259,7 +278,7 @@ function select_normal_form(position) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      alert("[ERROR in select_normal_form. position " + position + "] " + resp.message);
+      swal("[ERROR in select_normal_form. position " + position + "] " + resp.message, "error");
     } else {
       current.svg_final = resp.data;
     }
@@ -272,6 +291,7 @@ function get_rules(event) {
   set_level(5);
   // current.enable_rules = true;
   var form = new FormData();
+  form.append("session_id", current.session_id);
 
   var settings = {
     "url": "http://localhost:8080/rules",
@@ -287,7 +307,7 @@ function get_rules(event) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      alert("[ERROR in rules] " + resp.message);
+      swal("[ERROR in rules] " + resp.message, "error");
     } else {
       current.rules = resp.data;
       $("#button-rules").click();
@@ -314,6 +334,7 @@ function select_rule(position) {
   $(document.getElementById(event.target.id)).parent().addClass("selected");
 
   var form = new FormData();
+  form.append("session_id", current.session_id);
   form.append("position", position);
 
   var settings = {
@@ -330,7 +351,7 @@ function select_rule(position) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      alert("[ERROR in select_rule. position " + position + "] " + resp.message);
+      swal("[ERROR in select_rule. position " + position + "] " + resp.message, "error");
     } else {
       current.svg_before = resp.data.before;
       current.svg_after = resp.data.after;

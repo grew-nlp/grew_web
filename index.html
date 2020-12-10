@@ -8,9 +8,13 @@
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
@@ -28,7 +32,7 @@
 
       {{ level }}
 
-      {{ id }}
+      {{ session_id }}
 
       <ul class="nav nav-pills">
         <li class="active">
@@ -61,6 +65,7 @@
             <label class="custom-file-label">{{ grs }}</label>
           </div>
         </li>
+        <input id="dep_graph" type="checkbox" checked data-toggle="toggle" data-on="Dep" data-off="Graph" data-onstyle="success" data-offstyle="success">
       </ul>
     </nav>
 
@@ -74,7 +79,7 @@
             <div class="sidebar-sticky pt-3">
               <ul class="nav flex-column">
                 <li>
-                  <h3>{{sent_ids.length}} graph<span v-show="sent_ids.length > 1" >s</span></h3>
+                  <h3>{{sent_ids.length}} graph<span v-show="sent_ids.length > 1">s</span></h3>
                 </li>
                 <li class="nav-item" v-for="sent_id in sent_ids">
                   <a v-bind:id="sent_id" v-bind:class="{ selected: sent_ids.length == 1 }" v-on:click="select_graph_event" class="sent nav-link" href="#">
@@ -91,7 +96,7 @@
               <object type="image/svg+xml" class="logo" v-bind:data="svg_init"></object>
             </div>
 
-            <button v-for="strat in strats" v-bind:class="{ disabled: level < 2 }" v-bind:id="'strat-' + strat" v-on:click="rewrite"  type="button" class="btn btn-success">{{ strat }}</button>
+            <button v-for="strat in strats" v-bind:class="{ disabled: level < 2 }" v-bind:id="'strat-' + strat" v-on:click="rewrite" type="button" class="btn btn-success">{{ strat }}</button>
 
           </div>
         </div>
@@ -106,7 +111,7 @@
             <div class="sidebar-sticky pt-3">
               <ul class="nav flex-column">
                 <li>
-                  <h3>{{normal_forms.length}} Normal form<span v-show="normal_forms.length > 1" >s</span></h3>
+                  <h3>{{normal_forms.length}} Normal form<span v-show="normal_forms.length > 1">s</span></h3>
                 </li>
                 <li class="nav-item" v-for="normal_form in normal_forms">
                   <a v-bind:id="normal_form" v-bind:class="{ selected: normal_forms.length == 1 }" v-on:click="select_normal_form_event" class="sent nav-link" href="#">
@@ -143,7 +148,7 @@
             <div class="sidebar-sticky pt-3">
               <ul class="nav flex-column">
                 <li>
-                  <h3>{{rules.length}} rule<span v-show="rules.length > 1" >s</span></h3>
+                  <h3>{{rules.length}} rule<span v-show="rules.length > 1">s</span></h3>
                 </li>
                 <li class="nav-item" v-for="rule in rules">
                   <a v-bind:id="rule" v-bind:class="{ selected: rules.length == 1 }" v-on:click="select_rule_event" class="sent nav-link" href="#">
