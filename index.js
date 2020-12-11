@@ -79,7 +79,55 @@ function set_level(level) {
 
 // ====================================================================================================
 $('#dep_graph').change(function() {
-  swal("new stat" + $(this).prop('checked'), "error")
+  //  swal("new stat" + $(this).prop('checked'), "error")
+
+  var form = new FormData();
+  form.append("session_id", current.session_id);
+  if ($(this).prop('checked')) {
+    form.append("display", "dep");
+  } else {
+    form.append("display", "graph");
+  }
+
+  var settings = {
+    "url": "http://localhost:8080/set_display",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings).done(function(response) {
+    console.log(response);
+    resp = JSON.parse(response);
+    if (resp.status === "ERROR") {
+      swal("[ERROR in rules] " + resp.message, "error");
+    } else {
+      if ("init" in resp.data) {
+        current.svg_init = resp.data.init;
+      }
+      if ("final" in resp.data) {
+        current.svg_final = resp.data.final;
+      }
+      if ("before" in resp.data) {
+        current.svg_before = resp.data.before;
+      }
+      if ("after" in resp.data) {
+        current.svg_after = resp.data.after;
+      }
+    }
+  });
+
+
+
+
+
+
+
+
+
 })
 
 
