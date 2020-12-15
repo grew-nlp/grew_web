@@ -1,5 +1,8 @@
 Vue.config.devtools = true
 
+var baseurl="http://back.grew.fr/"
+//var baseurl="http://localhost:8080/"
+
 var current = new Vue({
   el: '#app',
   data: {
@@ -33,7 +36,7 @@ $(document).ready(function() {
 function connect() {
   var form = new FormData();
   var settings = {
-    "url": "http://localhost:8080/connect",
+    "url": baseurl + "connect",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -90,7 +93,7 @@ $('#dep_graph').change(function() {
   }
 
   var settings = {
-    "url": "http://localhost:8080/set_display",
+    "url": baseurl + "set_display",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -143,7 +146,7 @@ function upload_corpus(file) {
   form.append("file", corpus_input.files[0], file);
 
   var settings = {
-    "url": "http://localhost:8080/upload_corpus",
+    "url": baseurl + "upload_corpus",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -188,7 +191,7 @@ function upload_grs(file) {
 
 
   var settings = {
-    "url": "http://localhost:8080/upload_grs",
+    "url": baseurl + "upload_grs",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -228,7 +231,7 @@ function select_graph(sent_id) {
   form.append("sent_id", sent_id);
 
   var settings = {
-    "url": "http://localhost:8080/select_graph",
+    "url": baseurl + "select_graph",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -260,7 +263,7 @@ function rewrite(event) {
     form.append("strat", strat);
 
     var settings = {
-      "url": "http://localhost:8080/rewrite",
+      "url": baseurl + "rewrite",
       "method": "POST",
       "timeout": 0,
       "processData": false,
@@ -313,7 +316,7 @@ function select_normal_form(position) {
   form.append("position", position);
 
   var settings = {
-    "url": "http://localhost:8080/select_normal_form",
+    "url": baseurl + "select_normal_form",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -342,7 +345,7 @@ function get_rules(event) {
   form.append("session_id", current.session_id);
 
   var settings = {
-    "url": "http://localhost:8080/rules",
+    "url": baseurl + "rules",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -386,7 +389,7 @@ function select_rule(position) {
   form.append("position", position);
 
   var settings = {
-    "url": "http://localhost:8080/select_rule",
+    "url": baseurl + "select_rule",
     "method": "POST",
     "timeout": 0,
     "processData": false,

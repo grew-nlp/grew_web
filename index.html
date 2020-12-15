@@ -93,7 +93,7 @@
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
             <div class="display-svg">
-              <object type="image/svg+xml" class="logo" v-bind:data="svg_init"></object>
+              <img v-bind:src="svg_init"> </img>
             </div>
 
             <button v-for="strat in strats" v-bind:class="{ disabled: level < 2 }" v-bind:id="'strat-' + strat" v-on:click="rewrite" type="button" class="btn btn-success">{{ strat }}</button>
@@ -125,7 +125,7 @@
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
             <div id="svg_init" class="display-svg">
-              <object type="image/svg+xml" class="logo" v-bind:data="svg_init"></object>
+              <img v-bind:src="svg_init"> </img>
             </div>
 
             <p class="text-center" style="font-size:80px">
@@ -133,7 +133,7 @@
             </p>
 
             <div id="svg_final" class="display-svg">
-              <object type="image/svg+xml" class="logo" v-bind:data="svg_final"></object>
+              <img v-bind:src="svg_final"> </img>
             </div>
           </div>
         </div>
@@ -162,13 +162,13 @@
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
             <div id="svg_before" class="display-svg">
-              <object type="image/svg+xml" class="logo" v-bind:data="svg_before"></object>
+              <img v-bind:src="svg_before"> </img>
             </div>
 
             <p class="text-center" style="font-size:100px">↓</p>
 
             <div id="svg_after" class="display-svg">
-              <object type="image/svg+xml" class="logo" v-bind:data="svg_after"></object>
+              <img v-bind:src="svg_after"> </img>
             </div>
           </div>
 
