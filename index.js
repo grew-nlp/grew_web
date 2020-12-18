@@ -37,7 +37,9 @@ $(document).ready(function() {
 function init() {
   if (window.location.origin.includes("localhost")) {
     current.grew_back_url = "http://localhost:8080/"
-    $('.navbar').css({'background':'orange'});
+    $('.navbar').css({
+      'background': 'orange'
+    });
   }
 }
 
@@ -110,25 +112,28 @@ $('#dep_graph').change(function() {
   };
 
   $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      swal("set_display", resp.message, "error");
-    } else {
-      if ("init" in resp.data) {
-        current.svg_init = resp.data.init;
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("set_display", resp.message, "error");
+      } else {
+        if ("init" in resp.data) {
+          current.svg_init = resp.data.init;
+        }
+        if ("final" in resp.data) {
+          current.svg_final = resp.data.final;
+        }
+        if ("before" in resp.data) {
+          current.svg_before = resp.data.before;
+        }
+        if ("after" in resp.data) {
+          current.svg_after = resp.data.after;
+        }
       }
-      if ("final" in resp.data) {
-        current.svg_final = resp.data.final;
-      }
-      if ("before" in resp.data) {
-        current.svg_before = resp.data.before;
-      }
-      if ("after" in resp.data) {
-        current.svg_after = resp.data.after;
-      }
-    }
-  });
+    })
+    .fail(function() {
+      swal("Connection lost", "The grew_back service is not more available.", "error");
+    });
 })
 
 // ====================================================================================================
@@ -155,20 +160,24 @@ function upload_corpus(file) {
   };
 
   $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      swal("upload_corpus", resp.message, "error");
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("upload_corpus", resp.message, "error");
 
-    } else {
-      set_level(1);
-      current.corpus = file.name;
-      current.sent_ids = resp.data.sent_ids;
-      if (resp.data.sent_ids.length == 1) {
-        select_graph(resp.data.sent_ids[0])
+      } else {
+        set_level(1);
+        current.corpus = file.name;
+        current.sent_ids = resp.data.sent_ids;
+        if (resp.data.sent_ids.length == 1) {
+          select_graph(resp.data.sent_ids[0])
+        }
       }
-    }
-  });
+    })
+    .fail(function() {
+      swal("Connection lost", "The grew_back service is not more available.", "error");
+    });
+
 }
 
 // ====================================================================================================
@@ -196,16 +205,21 @@ function upload_grs(file) {
     "data": form
   };
 
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      swal("upload_grs", resp.message, "error");
-    } else {
-      current.grs = file.name;
-      current.strats = resp.data;
-    }
-  });
+  $.ajax(settings)
+    .done(function(response) {
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("upload_grs", resp.message, "error");
+      } else {
+        current.grs = file.name;
+        current.strats = resp.data;
+      }
+    })
+    .fail(function() {
+      swal("Connection lost", "The grew_back service is not more available.", "error");
+    });
+
 }
 
 // ====================================================================================================
@@ -236,15 +250,20 @@ function select_graph(sent_id) {
     "data": form
   };
 
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      swal("select_graph", resp.message, "error");
-    } else {
-      current.svg_init = resp.data;
-    }
-  });
+  $.ajax(settings)
+    .done(function(response) {
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("select_graph", resp.message, "error");
+      } else {
+        current.svg_init = resp.data;
+      }
+    })
+    .fail(function() {
+      swal("Connection lost", "The grew_back service is not more available.", "error");
+    });
+
 }
 
 // ====================================================================================================
@@ -268,29 +287,33 @@ function rewrite(event) {
       "data": form
     };
 
-    $.ajax(settings).done(function(response) {
-      console.log(response);
-      resp = JSON.parse(response);
-      if (resp.status === "ERROR") {
-        swal("rewrite", resp.message, "error");
-      } else {
-        current.normal_forms = [];
-        console.log(resp);
-        if (resp.data == 0) {
-          swal("rewrite", "No graph produced", "info");
-          set_level(2);
-        } else if (resp.data == 1) {
-          current.normal_forms = ["G_0"];
-          $("#button-rewriting").click();
-          select_normal_form(0);
+    $.ajax(settings)
+      .done(function(response) {
+        console.log(response);
+        resp = JSON.parse(response);
+        if (resp.status === "ERROR") {
+          swal("rewrite", resp.message, "error");
         } else {
-          for (var i = 0; i < resp.data; i++) {
-            current.normal_forms.push("G_" + i);
+          current.normal_forms = [];
+          console.log(resp);
+          if (resp.data == 0) {
+            swal("rewrite", "No graph produced", "info");
+            set_level(2);
+          } else if (resp.data == 1) {
+            current.normal_forms = ["G_0"];
+            $("#button-rewriting").click();
+            select_normal_form(0);
+          } else {
+            for (var i = 0; i < resp.data; i++) {
+              current.normal_forms.push("G_" + i);
+            }
+            $("#button-rewriting").click();
           }
-          $("#button-rewriting").click();
         }
-      }
-    });
+      })
+      .fail(function() {
+        swal("Connection lost", "The grew_back service is not more available.", "error");
+      });
   }
 }
 
@@ -322,16 +345,19 @@ function select_normal_form(position) {
     "data": form
   };
 
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      swal("select_normal_form", resp.message, "error");
-    } else {
-      current.svg_final = resp.data;
-    }
-  });
-
+  $.ajax(settings)
+    .done(function(response) {
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("select_normal_form", resp.message, "error");
+      } else {
+        current.svg_final = resp.data;
+      }
+    })
+    .fail(function() {
+      swal("Connection lost", "The grew_back service is not more available.", "error");
+    });
 }
 
 // ====================================================================================================
@@ -351,19 +377,23 @@ function get_rules(event) {
     "data": form
   };
 
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      swal("rules", resp.message, "error");
-    } else {
-      current.rules = resp.data;
-      $("#button-rules").click();
-      if (resp.data.length == 1) {
-        select_rule(1);
+  $.ajax(settings)
+    .done(function(response) {
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("rules", resp.message, "error");
+      } else {
+        current.rules = resp.data;
+        $("#button-rules").click();
+        if (resp.data.length == 1) {
+          select_rule(1);
+        }
       }
-    }
-  });
+    })
+    .fail(function() {
+      swal("Connection lost", "The grew_back service is not more available.", "error");
+    });
 }
 
 // ====================================================================================================
@@ -395,16 +425,21 @@ function select_rule(position) {
     "data": form
   };
 
-  $.ajax(settings).done(function(response) {
-    console.log(response);
-    resp = JSON.parse(response);
-    if (resp.status === "ERROR") {
-      swal("select_rule", resp.message, "error");
-    } else {
-      current.svg_before = resp.data.before;
-      current.svg_after = resp.data.after;
-    }
-  });
+  $.ajax(settings)
+    .done(function(response) {
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("select_rule", resp.message, "error");
+      } else {
+        current.svg_before = resp.data.before;
+        current.svg_after = resp.data.after;
+      }
+    })
+    .fail(function() {
+      swal("Connection lost", "The grew_back service is not more available.", "error");
+    });
+
 }
 
 // ====================================================================================================
