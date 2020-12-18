@@ -1,7 +1,7 @@
 Vue.config.devtools = true
 
-var baseurl="http://back.grew.fr/"
-//var baseurl="http://localhost:8080/"
+var grew_back_url="http://back.grew.fr/"
+//var grew_back_url = "http://localhost:8080/"
 
 var current = new Vue({
   el: '#app',
@@ -28,6 +28,7 @@ var current = new Vue({
   methods: {}
 })
 
+// ====================================================================================================
 $(document).ready(function() {
   connect();
 });
@@ -36,7 +37,7 @@ $(document).ready(function() {
 function connect() {
   var form = new FormData();
   var settings = {
-    "url": baseurl + "connect",
+    "url": grew_back_url + "connect",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -49,7 +50,7 @@ function connect() {
       console.log(response);
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
-        swal("[ERROR, file " + file.name + "] " + resp.message.message, "error");
+        swal("connect", resp.message.message, "error");
       } else {
         current.session_id = resp.data;
       }
@@ -82,8 +83,6 @@ function set_level(level) {
 
 // ====================================================================================================
 $('#dep_graph').change(function() {
-  //  swal("new stat" + $(this).prop('checked'), "error")
-
   var form = new FormData();
   form.append("session_id", current.session_id);
   if ($(this).prop('checked')) {
@@ -93,7 +92,7 @@ $('#dep_graph').change(function() {
   }
 
   var settings = {
-    "url": baseurl + "set_display",
+    "url": grew_back_url + "set_display",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -106,7 +105,7 @@ $('#dep_graph').change(function() {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      swal("[ERROR in rules] " + resp.message, "error");
+      swal("set_display", resp.message, "error");
     } else {
       if ("init" in resp.data) {
         current.svg_init = resp.data.init;
@@ -122,22 +121,14 @@ $('#dep_graph').change(function() {
       }
     }
   });
-
-
-
-
-
-
-
-
-
 })
-
 
 // ====================================================================================================
 $("#corpus_input").change(function(event) {
   const files = event.target.files;
   upload_corpus(files[0]);
+  // next line: trick to deal with reloading of the same file
+  $("#corpus_input").val('');
 })
 
 function upload_corpus(file) {
@@ -146,7 +137,7 @@ function upload_corpus(file) {
   form.append("file", corpus_input.files[0], file);
 
   var settings = {
-    "url": baseurl + "upload_corpus",
+    "url": grew_back_url + "upload_corpus",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -159,12 +150,7 @@ function upload_corpus(file) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      // swal("[ERROR, file " + file.name + "] " + resp.message, "error");
-      // swal("XXX", "error");
-      swal({
-        text: "[ERROR, file " + file.name + "] " + resp.message,
-        icon: "error",
-      });
+      swal("upload_corpus", resp.message, "error");
 
     } else {
       set_level(1);
@@ -182,6 +168,8 @@ function upload_corpus(file) {
 $("#grs_input").change(function(event) {
   const files = event.target.files;
   upload_grs(files[0]);
+  // next line: trick to deal with reloading of the same file
+  $("#grs_input").val('');
 })
 
 function upload_grs(file) {
@@ -191,7 +179,7 @@ function upload_grs(file) {
 
 
   var settings = {
-    "url": baseurl + "upload_grs",
+    "url": grew_back_url + "upload_grs",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -204,7 +192,7 @@ function upload_grs(file) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      swal("[ERROR, file " + file.name + "] " + resp.message, "error");
+      swal("upload_grs", resp.message, "error");
     } else {
       current.grs = file.name;
       current.strats = resp.data;
@@ -231,7 +219,7 @@ function select_graph(sent_id) {
   form.append("sent_id", sent_id);
 
   var settings = {
-    "url": baseurl + "select_graph",
+    "url": grew_back_url + "select_graph",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -244,7 +232,7 @@ function select_graph(sent_id) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      swal("[ERROR in change_graph. sent_id " + sent_id + "] " + resp.message, "error");
+      swal("select_graph", resp.message, "error");
     } else {
       current.svg_init = resp.data;
     }
@@ -263,7 +251,7 @@ function rewrite(event) {
     form.append("strat", strat);
 
     var settings = {
-      "url": baseurl + "rewrite",
+      "url": grew_back_url + "rewrite",
       "method": "POST",
       "timeout": 0,
       "processData": false,
@@ -276,12 +264,13 @@ function rewrite(event) {
       console.log(response);
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
-        swal("[ERROR in rewrite strat " + strat + "] " + resp.message, "error");
+        swal("rewrite", resp.message, "error");
       } else {
         current.normal_forms = [];
         console.log(resp);
         if (resp.data == 0) {
-          swal("No graph produced", "error");
+          swal("rewrite", "No graph produced", "info");
+          set_level(2);
         } else if (resp.data == 1) {
           current.normal_forms = ["G_0"];
           $("#button-rewriting").click();
@@ -316,7 +305,7 @@ function select_normal_form(position) {
   form.append("position", position);
 
   var settings = {
-    "url": baseurl + "select_normal_form",
+    "url": grew_back_url + "select_normal_form",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -329,7 +318,7 @@ function select_normal_form(position) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      swal("[ERROR in select_normal_form. position " + position + "] " + resp.message, "error");
+      swal("select_normal_form", resp.message, "error");
     } else {
       current.svg_final = resp.data;
     }
@@ -345,7 +334,7 @@ function get_rules(event) {
   form.append("session_id", current.session_id);
 
   var settings = {
-    "url": baseurl + "rules",
+    "url": grew_back_url + "rules",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -358,7 +347,7 @@ function get_rules(event) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      swal("[ERROR in rules] " + resp.message, "error");
+      swal("rules", resp.message, "error");
     } else {
       current.rules = resp.data;
       $("#button-rules").click();
@@ -389,7 +378,7 @@ function select_rule(position) {
   form.append("position", position);
 
   var settings = {
-    "url": baseurl + "select_rule",
+    "url": grew_back_url + "select_rule",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -402,7 +391,7 @@ function select_rule(position) {
     console.log(response);
     resp = JSON.parse(response);
     if (resp.status === "ERROR") {
-      swal("[ERROR in select_rule. position " + position + "] " + resp.message, "error");
+      swal("select_rule", resp.message, "error");
     } else {
       current.svg_before = resp.data.before;
       current.svg_after = resp.data.after;
@@ -410,6 +399,7 @@ function select_rule(position) {
   });
 }
 
+// ====================================================================================================
 syncScroll($('#svg_init'), $('#svg_final'));
 syncScroll($('#svg_before'), $('#svg_after'));
 
