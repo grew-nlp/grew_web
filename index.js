@@ -1,11 +1,10 @@
 Vue.config.devtools = true
 
-var grew_back_url="http://back.grew.fr/"
-//var grew_back_url = "http://localhost:8080/"
-
 var current = new Vue({
   el: '#app',
   data: {
+    grew_back_url: "http://back.grew.fr/",
+
     session_id: "Not connected",
     grs: 'No GRS loaded',
     strats: [],
@@ -37,7 +36,7 @@ $(document).ready(function() {
 // ====================================================================================================
 function init() {
   if (window.location.origin.includes("localhost")) {
-    grew_back_url = "http://localhost:8080/"
+    current.grew_back_url = "http://localhost:8080/"
     $('.navbar').css({'background':'orange'});
   }
 }
@@ -46,7 +45,7 @@ function init() {
 function connect() {
   var form = new FormData();
   var settings = {
-    "url": grew_back_url + "connect",
+    "url": current.grew_back_url + "connect",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -101,7 +100,7 @@ $('#dep_graph').change(function() {
   }
 
   var settings = {
-    "url": grew_back_url + "set_display",
+    "url": current.grew_back_url + "set_display",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -146,7 +145,7 @@ function upload_corpus(file) {
   form.append("file", corpus_input.files[0], file);
 
   var settings = {
-    "url": grew_back_url + "upload_corpus",
+    "url": current.grew_back_url + "upload_corpus",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -188,7 +187,7 @@ function upload_grs(file) {
 
 
   var settings = {
-    "url": grew_back_url + "upload_grs",
+    "url": current.grew_back_url + "upload_grs",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -228,7 +227,7 @@ function select_graph(sent_id) {
   form.append("sent_id", sent_id);
 
   var settings = {
-    "url": grew_back_url + "select_graph",
+    "url": current.grew_back_url + "select_graph",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -260,7 +259,7 @@ function rewrite(event) {
     form.append("strat", strat);
 
     var settings = {
-      "url": grew_back_url + "rewrite",
+      "url": current.grew_back_url + "rewrite",
       "method": "POST",
       "timeout": 0,
       "processData": false,
@@ -314,7 +313,7 @@ function select_normal_form(position) {
   form.append("position", position);
 
   var settings = {
-    "url": grew_back_url + "select_normal_form",
+    "url": current.grew_back_url + "select_normal_form",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -343,7 +342,7 @@ function get_rules(event) {
   form.append("session_id", current.session_id);
 
   var settings = {
-    "url": grew_back_url + "rules",
+    "url": current.grew_back_url + "rules",
     "method": "POST",
     "timeout": 0,
     "processData": false,
@@ -387,7 +386,7 @@ function select_rule(position) {
   form.append("position", position);
 
   var settings = {
-    "url": grew_back_url + "select_rule",
+    "url": current.grew_back_url + "select_rule",
     "method": "POST",
     "timeout": 0,
     "processData": false,

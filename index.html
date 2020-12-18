@@ -176,9 +176,15 @@
     </div>
 
     <div id="status" class="navbar fixed-bottom">
-      Session id: {{ session_id }}
-      ---
-      Level: {{ level }}
+      <ul class="nav nav-pills">
+        <li class="active">
+          <label><b>session_id:</b> {{ session_id }}</label>
+          &nbsp; ••• &nbsp;
+          <label><b>level:</b> {{ level }}  </label>
+          &nbsp; ••• &nbsp;
+          <label><b>grew_back_url:</b> {{ grew_back_url }}  </label>
+        </li>
+      </ul>
     </div>
   </div>
 
