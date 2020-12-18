@@ -30,10 +30,6 @@
     <nav class="navbar navbar-expand-sm fixed-top">
       <img aria-hidden="true" role="presentation" src="img/grew.svg" id="logo">
 
-      {{ level }}
-
-      {{ session_id }}
-
       <ul class="nav nav-pills">
         <li class="active">
           <button id="button-corpus" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-corpus">Corpus</button>
@@ -177,6 +173,12 @@
 
 
 
+    </div>
+
+    <div id="status" class="navbar fixed-bottom">
+      Session id: {{ session_id }}
+      ---
+      Level: {{ level }}
     </div>
   </div>
 
