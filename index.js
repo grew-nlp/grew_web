@@ -56,7 +56,8 @@ function connect() {
     "data": form
   };
 
-  $.ajax(settings).done(function(response) {
+  $.ajax(settings)
+    .done(function(response) {
       console.log(response);
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
@@ -111,7 +112,8 @@ $('#dep_graph').change(function() {
     "data": form
   };
 
-  $.ajax(settings).done(function(response) {
+  $.ajax(settings)
+    .done(function(response) {
       console.log(response);
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
@@ -159,7 +161,8 @@ function upload_corpus(file) {
     "data": form
   };
 
-  $.ajax(settings).done(function(response) {
+  $.ajax(settings)
+    .done(function(response) {
       console.log(response);
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
@@ -296,18 +299,18 @@ function rewrite(event) {
         } else {
           current.normal_forms = [];
           console.log(resp);
-          if (resp.data == 0) {
+          if (resp.data == []) {
             swal("rewrite", "No graph produced", "info");
             set_level(2);
-          } else if (resp.data == 1) {
-            current.normal_forms = ["G_0"];
-            $("#button-rewriting").click();
-            select_normal_form(0);
           } else {
-            for (var i = 0; i < resp.data; i++) {
-              current.normal_forms.push("G_" + i);
-            }
+            resp.data.forEach((item, i) => {
+              current.normal_forms.push("G_" + i + " • " + item + " rules");
+            });
             $("#button-rewriting").click();
+          }
+          // if there is exactly one normal_form, select it
+          if (resp.data.length == 1) {
+            select_normal_form(0);
           }
         }
       })
@@ -319,7 +322,9 @@ function rewrite(event) {
 
 // ====================================================================================================
 function select_normal_form_event(event) {
-  const position = event.target.id.slice(2);
+  const fields = event.target.id.split(" • ");
+  const position = fields[0].slice(2);
+  const nb_rule = fields[1].split(" ")[0];
   select_normal_form(position);
 }
 
