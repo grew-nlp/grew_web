@@ -129,14 +129,21 @@
               <div class="column">
                 <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ strat }}</h3>
               </div>
-              <div class="column">
-                <p v-if="level >= 4" class="text-center" style="font-size:80px">
-                  ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See {{ nb_rules }} rule<span v-show="nb_rules > 1">s</span></button>↓
-                </p>
+              <div v-if="level >= 4" class="column">
+                <div v-if="nb_rules > 0">
+                  <p class="text-center" style="font-size:80px">
+                    ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See {{ nb_rules }} rule<span v-show="nb_rules > 1">s</span></button>↓
+                  </p>
+                </div>
+                <div v-else>
+                  <p class="text-center" style="font-size:80px">
+                    <button class="btn btn-warning btn-lg disabled">No rule apply</button>
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div id="svg_final" class="display-svg">
+            <div v-if="nb_rules > 0" id="svg_final" class="display-svg">
               <img v-bind:src="svg_final"> </img>
             </div>
           </div>
