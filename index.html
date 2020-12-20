@@ -92,7 +92,14 @@
               <img v-bind:src="svg_init"> </img>
             </div>
 
-            <button v-for="strat in strats" v-bind:class="{ disabled: level < 2 }" v-bind:id="'strat-' + strat" v-on:click="rewrite" type="button" class="btn btn-success">{{ strat }}</button>
+            <span v-for="strat in strats">
+              <span v-if="strat === selected_strat">
+                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite" v-bind:class="{ disabled: level < 2 }" class="btn btn-success">{{ strat }}</button>
+              </span>
+              <span v-else>
+                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite" v-bind:class="{ disabled: level < 2 }" class="btn btn-secondary">{{ strat }}</button>
+              </span>
+            </span>
 
           </div>
         </div>
@@ -127,7 +134,7 @@
 
             <div class="row">
               <div class="column">
-                <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ strat }}</h3>
+                <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ selected_strat }}</h3>
               </div>
               <div v-if="level >= 4" class="column">
                 <div v-if="nb_rules > 0">
@@ -179,7 +186,7 @@
 
             <div class="row">
               <div class="column">
-                <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ strat }}</h3>
+                <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ selected_strat }}</h3>
               </div>
               <div class="column">
                 <p class="text-center" style="font-size:80px">↓</p>

@@ -14,7 +14,7 @@ var current = new Vue({
 
     level: 0,
     selected_graph: "",
-    strat: "",
+    selected_strat: "",
     nb_rules: 0,
 
     normal_forms: [],
@@ -87,6 +87,7 @@ function set_level(level) {
   if (level < 4) {
     current.normal_forms = [];
     current.svg_final = "";
+    current.selected_strat = "";
   }
   if (level < 5) {
     current.rules = [];
@@ -309,7 +310,7 @@ function rewrite(event) {
             set_level(2);
           } else {
             current.normal_forms = resp.data
-            current.strat = strat;
+            current.selected_strat = strat;
             $("#button-rewriting").click(); // change pane
           }
           // if there is exactly one normal_form, select it
