@@ -109,9 +109,9 @@
                 <li>
                   <h3>{{normal_forms.length}} Normal form<span v-show="normal_forms.length > 1">s</span></h3>
                 </li>
-                <li class="nav-item" v-for="normal_form in normal_forms">
-                  <a v-bind:id="normal_form" v-bind:class="{ selected: normal_forms.length == 1 }" v-on:click="select_normal_form_event" class="sent nav-link" href="#">
-                    {{ normal_form }}
+                <li class="nav-item" v-for="(normal_form, index) in normal_forms">
+                  <a v-bind:id="'G_'+index" v-bind:class="{ selected: normal_forms.length == 1 }" v-on:click="select_normal_form_event" class="sent nav-link" href="#">
+                    G_{{index}} • {{ normal_form }} rule<span v-show="nb_rules > 1">s</span>
                   </a>
                 </li>
               </ul>
@@ -130,8 +130,8 @@
                 <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ strat }}</h3>
               </div>
               <div class="column">
-                <p class="text-center" style="font-size:80px">
-                  ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See rules</button>↓
+                <p v-if="level >= 4" class="text-center" style="font-size:80px">
+                  ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See {{ nb_rules }} rule<span v-show="nb_rules > 1">s</span></button>↓
                 </p>
               </div>
             </div>

@@ -15,11 +15,13 @@ var current = new Vue({
     level: 0,
     selected_graph: "",
     strat: "",
+    nb_rules: 0,
 
     normal_forms: [],
 
     enable_rules: false,
     rules: [],
+
 
     svg_init: "",
     svg_final: "",
@@ -306,9 +308,7 @@ function rewrite(event) {
             swal("rewrite", "No graph produced", "info");
             set_level(2);
           } else {
-            resp.data.forEach((item, i) => {
-              current.normal_forms.push("G_" + i + " • " + item + " rules");
-            });
+            current.normal_forms = resp.data
             current.strat = strat;
             $("#button-rewriting").click(); // change pane
           }
@@ -326,9 +326,7 @@ function rewrite(event) {
 
 // ====================================================================================================
 function select_normal_form_event(event) {
-  const fields = event.target.id.split(" • ");
-  const position = fields[0].slice(2);
-  const nb_rule = fields[1].split(" ")[0];
+  const position = event.target.id.slice(2); // remove prefix "G_"
   select_normal_form(position);
 }
 
@@ -336,6 +334,8 @@ function select_normal_form_event(event) {
 function select_normal_form(position) {
   console.log("[select_normal_form] " + position);
   set_level(4);
+
+  current.nb_rules = current.normal_forms[position];
 
   $('#pill-rewriting .nav-item').removeClass('selected');
   $("#" + event.target.id).parent().addClass("selected");
