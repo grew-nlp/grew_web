@@ -13,6 +13,8 @@ var current = new Vue({
     sent_ids: [],
 
     level: 0,
+    selected_graph: "",
+    strat: "",
 
     normal_forms: [],
 
@@ -260,6 +262,7 @@ function select_graph(sent_id) {
       if (resp.status === "ERROR") {
         swal("select_graph", resp.message, "error");
       } else {
+        current.selected_graph = sent_id;
         current.svg_init = resp.data;
       }
     })
@@ -306,7 +309,8 @@ function rewrite(event) {
             resp.data.forEach((item, i) => {
               current.normal_forms.push("G_" + i + " • " + item + " rules");
             });
-            $("#button-rewriting").click();
+            current.strat = strat;
+            $("#button-rewriting").click(); // change pane
           }
           // if there is exactly one normal_form, select it
           if (resp.data.length == 1) {

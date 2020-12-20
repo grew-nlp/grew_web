@@ -65,7 +65,6 @@
       </ul>
     </nav>
 
-
     <div class="tab-content">
       <!-- *************** pane 1: corpus view *************** -->
       <div id="pill-corpus" class="main tab-pane fade in active show">
@@ -87,6 +86,7 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_graph }}</h3>
 
             <div class="display-svg">
               <img v-bind:src="svg_init"> </img>
@@ -119,14 +119,22 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_graph }}</h3>
 
             <div id="svg_init" class="display-svg">
               <img v-bind:src="svg_init"> </img>
             </div>
 
-            <p class="text-center" style="font-size:80px">
-              ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See rules</button>↓
-            </p>
+            <div class="row">
+              <div class="column">
+                <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ strat }}</h3>
+              </div>
+              <div class="column">
+                <p class="text-center" style="font-size:80px">
+                  ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See rules</button>↓
+                </p>
+              </div>
+            </div>
 
             <div id="svg_final" class="display-svg">
               <img v-bind:src="svg_final"> </img>
@@ -156,12 +164,20 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_graph }}</h3>
 
             <div id="svg_before" class="display-svg">
               <img v-bind:src="svg_before"> </img>
             </div>
 
-            <p class="text-center" style="font-size:100px">↓</p>
+            <div class="row">
+              <div class="column">
+                <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ strat }}</h3>
+              </div>
+              <div class="column">
+                <p class="text-center" style="font-size:80px">↓</p>
+              </div>
+            </div>
 
             <div id="svg_after" class="display-svg">
               <img v-bind:src="svg_after"> </img>
@@ -171,8 +187,6 @@
         </div>
       </div>
 
-
-
     </div>
 
     <div id="status" class="navbar fixed-bottom">
@@ -180,9 +194,9 @@
         <li class="active">
           <label><b>session_id:</b> {{ session_id }}</label>
           &nbsp; ••• &nbsp;
-          <label><b>level:</b> {{ level }}  </label>
+          <label><b>level:</b> {{ level }} </label>
           &nbsp; ••• &nbsp;
-          <label><b>grew_back_url:</b> {{ grew_back_url }}  </label>
+          <label><b>grew_back_url:</b> {{ grew_back_url }} </label>
         </li>
       </ul>
     </div>
