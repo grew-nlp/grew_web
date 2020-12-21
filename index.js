@@ -154,7 +154,7 @@ $("#corpus_input").change(function(event) {
 function upload_corpus(file) {
   var form = new FormData();
   form.append("session_id", current.session_id);
-  form.append("file", corpus_input.files[0], file);
+  form.append("file", file);
 
   var settings = {
     "url": current.grew_back_url + "upload_corpus",
@@ -200,7 +200,7 @@ $("#grs_input").change(function(event) {
 function upload_grs(file) {
   var form = new FormData();
   form.append("session_id", current.session_id);
-  form.append("file", grs_input.files[0], file);
+  form.append("file", file);
 
 
   var settings = {
