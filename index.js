@@ -99,10 +99,12 @@ function set_level(level) {
     $('#pill-corpus .nav-item').removeClass('selected');
     current.svg_init = "";
   }
+  if (level <= 2) {
+    current.selected_strat = "";
+  }
   if (level < 4) {
     current.normal_forms = [];
     current.svg_final = "";
-    current.selected_strat = "";
   }
   if (level < 5) {
     current.rules = [];
@@ -172,7 +174,9 @@ function url_grs(url) {
   request("url_grs", form, function(data) {
     current.grs = "From URL";
     current.strats = data;
-    set_level(2);
+    if (current.level > 2) {
+      set_level(2)
+    };
     $("#button-corpus").click(); // change pane
   })
 }
@@ -195,7 +199,9 @@ function upload_grs(file) {
   request("upload_grs", form, function(data) {
     current.grs = file.name;
     current.strats = data;
-    set_level(2);
+    if (current.level > 2) {
+      set_level(2)
+    };
     $("#button-corpus").click(); // change pane
   })
 }
@@ -235,18 +241,18 @@ function rewrite(event) {
   form.append("strat", strat);
 
   request("rewrite", form, function(data) {
+    current.selected_strat = strat;
     current.normal_forms = [];
-    if (data == []) {
-      swal("rewrite", "No graph produced", "info");
-      set_level(2);
+    if (data.length == 0) {
+      set_level(2.5);
     } else {
       current.normal_forms = data
-      current.selected_strat = strat;
       $("#button-rewriting").click(); // change pane
-    }
-    // if there is exactly one normal_form, select it
-    if (data.length == 1) {
-      select_normal_form(0);
+      // if there is exactly one normal_form, select it
+      if (data.length == 1) {
+        select_normal_form(0);
+      }
+
     }
   })
 }
