@@ -16,10 +16,10 @@ var current = new Vue({
     selected_sent_id: "",
 
     normal_forms: [],
-    selected_normal_form: -1,  // the index of the currently selected normal_form
+    selected_normal_form: -1, // the index of the currently selected normal_form
 
     rules: [],
-    selected_rule: -1,  // the index of the currently selected rule
+    selected_rule: -1, // the index of the currently selected rule
     nb_rules: 0,
 
 
@@ -212,7 +212,9 @@ function upload_grs(file) {
 // ====================================================================================================
 function select_graph_event(event) {
   const sent_id = event.target.id;
-  select_graph(sent_id);
+  if (sent_id != current.selected_sent_id) {
+    select_graph(sent_id);
+  }
 }
 
 // ====================================================================================================
@@ -259,7 +261,9 @@ function rewrite(event) {
 // ====================================================================================================
 function select_normal_form_event(event) {
   const position = event.target.id.slice(2); // remove prefix "G_"
-  select_normal_form(position);
+  if (position != current.selected_normal_form) {
+    select_normal_form(position);
+  }
 }
 
 // ====================================================================================================
@@ -303,7 +307,9 @@ function get_rules(event) {
 // ====================================================================================================
 function select_rule_event(event) {
   const position = event.target.id.slice(2); // remove prefix "R_"
-  select_rule(position)
+  if (position != current.selected_rule) {
+    select_rule(position);
+  }
 }
 
 // ====================================================================================================
