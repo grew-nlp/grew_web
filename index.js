@@ -101,6 +101,7 @@ function set_level(level) {
   }
   if (level <= 2) {
     current.selected_strat = "";
+    current.selected_sent_id = "";
   }
   if (level < 5) {
     current.selected_normal_form = -1;
@@ -233,9 +234,18 @@ function select_graph(sent_id) {
 }
 
 // ====================================================================================================
-function rewrite(event) {
-  set_level(4);
+function rewrite_event(event) {
   const strat = event.target.id.slice(6) // remove the prefix "strat-"
+  if (strat != current.selected_strat) {
+    rewrite(strat);
+  } else {
+    $("#button-rewriting").click(); // change pane
+  }
+}
+
+// ====================================================================================================
+function rewrite(strat) {
+  set_level(4);
   console.log("[rewrite] " + strat);
 
   var form = new FormData();
@@ -290,7 +300,16 @@ function select_normal_form(position) {
 }
 
 // ====================================================================================================
-function get_rules(event) {
+function get_rules_event(event) {
+  if (current.level > 6) {
+    $("#button-rules").click();
+  } else {
+    get_rules()
+  }
+}
+
+// ====================================================================================================
+function get_rules() {
   set_level(7);
   var form = new FormData();
   form.append("session_id", current.session_id);
@@ -299,7 +318,7 @@ function get_rules(event) {
     current.rules = data;
     $("#button-rules").click();
     if (data.length == 1) {
-      select_rule(1);
+      select_rule(0);
     }
   })
 }

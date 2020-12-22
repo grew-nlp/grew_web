@@ -94,10 +94,10 @@
 
             <span v-for="strat in strats">
               <span v-if="strat === selected_strat">
-                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite" v-bind:class="{ disabled: level < 2 }" class="btn btn-success">{{ strat }}</button>
+                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" v-bind:class="{ disabled: level < 2 }" class="btn btn-success">{{ strat }}</button>
               </span>
               <span v-else>
-                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite" v-bind:class="{ disabled: level < 2 }" class="btn btn-secondary">{{ strat }}</button>
+                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" v-bind:class="{ disabled: level < 2 }" class="btn btn-secondary">{{ strat }}</button>
               </span>
             </span>
 
@@ -140,9 +140,9 @@
               <div class="column">
                 <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ selected_strat }}</h3>
               </div>
-              <div v-if="level == 6" class="column">
+              <div v-if="level >= 6" class="column">
                   <p class="text-center" style="font-size:80px">
-                    ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See {{ nb_rules }} rule<span v-show="nb_rules > 1">s</span></button>↓
+                    ↓<button v-on:click="get_rules_event" class="btn btn-success btn-lg">See {{ nb_rules }} rule<span v-show="nb_rules > 1">s</span></button>↓
                   </p>
               </div>
               <div v-if="level == 5" class="column">
