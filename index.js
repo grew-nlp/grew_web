@@ -4,23 +4,23 @@ var current = new Vue({
   el: '#app',
   data: {
     grew_back_url: "http://back.grew.fr/",
-
     session_id: "Not connected",
+    level: 0,
+
     grs: 'No GRS loaded',
     strats: [],
+    selected_strat: "",
 
     corpus: 'No corpus loaded',
     sent_ids: [],
-
-    level: 0,
-    selected_graph: "",
-    selected_strat: "",
-    nb_rules: 0,
+    selected_sent_id: "",
 
     normal_forms: [],
+    selected_normal_form: -1,  // the index of the currently selected normal_form
 
-    enable_rules: false,
     rules: [],
+    selected_rule: -1,  // the index of the currently selected rule
+    nb_rules: 0,
 
 
     svg_init: "",
@@ -103,6 +103,7 @@ function set_level(level) {
     current.selected_strat = "";
   }
   if (level < 5) {
+    current.selected_normal_form = -1;
     current.normal_forms = [];
     current.svg_final = "";
   }
@@ -110,6 +111,7 @@ function set_level(level) {
     current.rules = [];
     current.svg_before = "";
     current.svg_after = "";
+    current.selected_rule = -1;
   }
 }
 
@@ -218,15 +220,12 @@ function select_graph(sent_id) {
   set_level(2);
   console.log("[select_graph] " + sent_id);
 
-  $('#pill-corpus .nav-item').removeClass('selected');
-  $("#" + sent_id).parent().addClass("selected");
-
   var form = new FormData();
   form.append("session_id", current.session_id);
   form.append("sent_id", sent_id);
 
   request("select_graph", form, function(data) {
-    current.selected_graph = sent_id;
+    current.selected_sent_id = sent_id;
     current.svg_init = data;
   })
 }
@@ -265,12 +264,10 @@ function select_normal_form_event(event) {
 
 // ====================================================================================================
 function select_normal_form(position) {
+  current.selected_normal_form = position;
   console.log("[select_normal_form] " + position);
 
   current.nb_rules = current.normal_forms[position];
-
-  $('#pill-rewriting .nav-item').removeClass('selected');
-  $("#" + event.target.id).parent().addClass("selected");
 
   if (current.nb_rules == 0) {
     set_level(5);
@@ -291,7 +288,6 @@ function select_normal_form(position) {
 // ====================================================================================================
 function get_rules(event) {
   set_level(7);
-  // current.enable_rules = true;
   var form = new FormData();
   form.append("session_id", current.session_id);
 
@@ -306,18 +302,15 @@ function get_rules(event) {
 
 // ====================================================================================================
 function select_rule_event(event) {
-  const position = event.target.id.split("-")[0];
+  const position = event.target.id.slice(2); // remove prefix "R_"
   select_rule(position)
 }
 
 // ====================================================================================================
 function select_rule(position) {
   set_level(8);
+  current.selected_rule = position;
   console.log("[select_rule] " + position);
-
-  $('#pill-rules .nav-item').removeClass('selected');
-  // jquery selector does not work because of the dot usage in rule names (stackoverflow.com/questions/605630)
-  $(document.getElementById(event.target.id)).parent().addClass("selected");
 
   var form = new FormData();
   form.append("session_id", current.session_id);
