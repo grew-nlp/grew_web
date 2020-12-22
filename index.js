@@ -68,6 +68,7 @@ function connect() {
         swal("connect", resp.message.message, "error");
       } else {
         current.session_id = resp.data;
+        parameters(); // make sure that parameters are handled after connection with the server
       }
     })
     .fail(function() {
@@ -75,6 +76,13 @@ function connect() {
     });
 }
 
+// ====================================================================================================
+function parameters() {
+  let searchParams = new URLSearchParams(window.location.search)
+  if (searchParams.has('grs')) {
+    url_grs(searchParams.get('grs'));
+  }
+}
 
 // ====================================================================================================
 function set_level(level) {
@@ -189,6 +197,38 @@ function upload_corpus(file) {
 }
 
 // ====================================================================================================
+function url_grs(url) {
+  var form = new FormData();
+  form.append("session_id", current.session_id);
+  form.append("url", url);
+
+  var settings = {
+    "url": current.grew_back_url + "url_grs",
+    "method": "POST",
+    "timeout": 0,
+    "processData": false,
+    "mimeType": "multipart/form-data",
+    "contentType": false,
+    "data": form
+  };
+
+  $.ajax(settings)
+    .done(function(response) {
+      console.log(response);
+      resp = JSON.parse(response);
+      if (resp.status === "ERROR") {
+        swal("upload_grs", resp.message, "error");
+      } else {
+        current.grs = "From URL";
+        current.strats = resp.data;
+      }
+    })
+    .fail(function() {
+      swal("Connection lost", "The grew_back service is not more available.", "error");
+    });
+}
+
+// ====================================================================================================
 // Binding on grs_input
 $("#grs_input").change(function(event) {
   const files = event.target.files;
@@ -201,7 +241,6 @@ function upload_grs(file) {
   var form = new FormData();
   form.append("session_id", current.session_id);
   form.append("file", file);
-
 
   var settings = {
     "url": current.grew_back_url + "upload_grs",
