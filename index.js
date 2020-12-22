@@ -102,11 +102,11 @@ function set_level(level) {
   if (level <= 2) {
     current.selected_strat = "";
   }
-  if (level < 3.5) {
+  if (level < 5) {
     current.normal_forms = [];
     current.svg_final = "";
   }
-  if (level < 5) {
+  if (level < 7) {
     current.rules = [];
     current.svg_before = "";
     current.svg_after = "";
@@ -232,7 +232,7 @@ function select_graph(sent_id) {
 
 // ====================================================================================================
 function rewrite(event) {
-  set_level(3);
+  set_level(4);
   const strat = event.target.id.slice(6) // remove the prefix "strat-"
   console.log("[rewrite] " + strat);
 
@@ -244,7 +244,7 @@ function rewrite(event) {
     current.selected_strat = strat;
     current.normal_forms = [];
     if (data.length == 0) {
-      set_level(2.5);
+      set_level(3);
     } else {
       current.normal_forms = data
       $("#button-rewriting").click(); // change pane
@@ -272,10 +272,10 @@ function select_normal_form(position) {
   $("#" + event.target.id).parent().addClass("selected");
 
   if (current.nb_rules == 0) {
-    set_level(3.5);
+    set_level(5);
     current.svg_final = current.svg_init;
   } else {
-    set_level(4);
+    set_level(6);
 
     var form = new FormData();
     form.append("session_id", current.session_id);
@@ -289,7 +289,7 @@ function select_normal_form(position) {
 
 // ====================================================================================================
 function get_rules(event) {
-  set_level(5);
+  set_level(7);
   // current.enable_rules = true;
   var form = new FormData();
   form.append("session_id", current.session_id);
@@ -311,7 +311,7 @@ function select_rule_event(event) {
 
 // ====================================================================================================
 function select_rule(position) {
-  set_level(6);
+  set_level(8);
   console.log("[select_rule] " + position);
 
   $('#pill-rules .nav-item').removeClass('selected');

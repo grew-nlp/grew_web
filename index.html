@@ -35,10 +35,10 @@
           <button id="button-corpus" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-corpus">Corpus</button>
         </li>
         <li>
-          <button id="button-rewriting" v-bind:class="{ disabled: level < 3 }" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rewriting">Rewriting</button>
+          <button id="button-rewriting" v-bind:class="{ disabled: level < 4 }" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rewriting">Rewriting</button>
         </li>
         <li>
-          <button id="button-rules" v-bind:class="{ disabled: level < 5}" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rules">Rules</button>
+          <button id="button-rules" v-bind:class="{ disabled: level < 7}" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rules">Rules</button>
         </li>
       </ul>
 
@@ -101,7 +101,7 @@
               </span>
             </span>
 
-            <p v-if="level == 2.5" class="text-center" style="font-size:80px">
+            <p v-if="level == 3" class="text-center" style="font-size:80px">
               <button class="btn btn-warning btn-lg disabled">No graphs produced</button>
             </p>
 
@@ -140,12 +140,12 @@
               <div class="column">
                 <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ selected_strat }}</h3>
               </div>
-              <div v-if="level == 4" class="column">
+              <div v-if="level == 6" class="column">
                   <p class="text-center" style="font-size:80px">
                     ↓<button v-on:click="get_rules" class="btn btn-success btn-lg">See {{ nb_rules }} rule<span v-show="nb_rules > 1">s</span></button>↓
                   </p>
               </div>
-              <div v-if="level == 3.5" class="column">
+              <div v-if="level == 5" class="column">
                   <p class="text-center" style="font-size:80px">
                     <button class="btn btn-warning btn-lg disabled">No rules apply</button>
                   </p>
