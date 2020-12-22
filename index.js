@@ -102,7 +102,7 @@ function set_level(level) {
   if (level <= 2) {
     current.selected_strat = "";
   }
-  if (level < 4) {
+  if (level < 3.5) {
     current.normal_forms = [];
     current.svg_final = "";
   }
@@ -252,7 +252,6 @@ function rewrite(event) {
       if (data.length == 1) {
         select_normal_form(0);
       }
-
     }
   })
 }
@@ -266,20 +265,26 @@ function select_normal_form_event(event) {
 // ====================================================================================================
 function select_normal_form(position) {
   console.log("[select_normal_form] " + position);
-  set_level(4);
 
   current.nb_rules = current.normal_forms[position];
 
   $('#pill-rewriting .nav-item').removeClass('selected');
   $("#" + event.target.id).parent().addClass("selected");
 
-  var form = new FormData();
-  form.append("session_id", current.session_id);
-  form.append("position", position);
+  if (current.nb_rules == 0) {
+    set_level(3.5);
+    current.svg_final = current.svg_init;
+  } else {
+    set_level(4);
 
-  request("select_normal_form", form, function(data) {
-    current.svg_final = data;
-  })
+    var form = new FormData();
+    form.append("session_id", current.session_id);
+    form.append("position", position);
+
+    request("select_normal_form", form, function(data) {
+      current.svg_final = data;
+    })
+  }
 }
 
 // ====================================================================================================
