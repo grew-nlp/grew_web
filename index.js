@@ -153,12 +153,13 @@ function upload_corpus(file) {
   form.append("file", file);
 
   request("upload_corpus", form, function(data) {
-    set_level(1);
     current.corpus = file.name;
     current.sent_ids = resp.data.sent_ids;
     if (resp.data.sent_ids.length == 1) {
       select_graph(resp.data.sent_ids[0])
     }
+    set_level(1);
+    $("#button-corpus").click(); // change pane
   })
 }
 
@@ -171,7 +172,8 @@ function url_grs(url) {
   request("url_grs", form, function(data) {
     current.grs = "From URL";
     current.strats = data;
-
+    set_level(2);
+    $("#button-corpus").click(); // change pane
   })
 }
 
@@ -193,6 +195,8 @@ function upload_grs(file) {
   request("upload_grs", form, function(data) {
     current.grs = file.name;
     current.strats = data;
+    set_level(2);
+    $("#button-corpus").click(); // change pane
   })
 }
 
