@@ -157,11 +157,12 @@ function upload_corpus(file) {
   request("upload_corpus", form, function(data) {
     current.corpus = file.name;
     current.sent_ids = resp.data.sent_ids;
-    if (resp.data.sent_ids.length == 1) {
-      select_graph(resp.data.sent_ids[0])
-    }
     set_level(1);
     $("#button-corpus").click(); // change pane
+    if (resp.data.sent_ids.length == 1) {
+      select_graph(resp.data.sent_ids[0]);
+      set_level(2);
+    }
   })
 }
 
