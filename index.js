@@ -70,7 +70,11 @@ function request(service, form, data_fct) {
       }
     })
     .fail(function() {
-      swal("Connection fail", "The grew_back service is not available.", "error");
+      if (service != "connect") {
+        swal("Connection fail", "The grew_back service is not available.", "error");
+      } else {
+        window.location.replace("./maintenance.html");
+      }
     });
 }
 

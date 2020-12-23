@@ -88,7 +88,7 @@
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_sent_id }}</h3>
 
-            <div class="display-svg">
+            <div v-show="svg_init != ''" class="display-svg">
               <img v-bind:src="svg_init"> </img>
             </div>
 
@@ -132,7 +132,7 @@
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_sent_id }}</h3>
 
-            <div id="svg_init" class="display-svg">
+            <div v-show="svg_init != ''" id="svg_init" class="display-svg">
               <img v-bind:src="svg_init"> </img>
             </div>
 
@@ -152,7 +152,7 @@
               </div>
             </div>
 
-            <div id="svg_final" class="display-svg">
+            <div v-show="svg_final != ''" id="svg_final" class="display-svg">
               <img v-bind:src="svg_final"> </img>
             </div>
           </div>
@@ -182,7 +182,7 @@
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_sent_id }}</h3>
 
-            <div id="svg_before" class="display-svg">
+            <div v-show="svg_before != ''" id="svg_before" class="display-svg">
               <img v-bind:src="svg_before"> </img>
             </div>
 
@@ -195,7 +195,7 @@
               </div>
             </div>
 
-            <div id="svg_after" class="display-svg">
+            <div v-show="svg_after != ''" id="svg_after" class="display-svg">
               <img v-bind:src="svg_after"> </img>
             </div>
           </div>
