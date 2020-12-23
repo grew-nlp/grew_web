@@ -72,11 +72,13 @@
         <div class="wrapper">
           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             <div class="sidebar-sticky pt-3">
+              <h3>{{sent_ids.length}} graph<span v-show="sent_ids.length > 1">s</span></h3>
+              <div v-if="sent_ids.length>1">
+                Filter:
+                <input type="text" v-model="search" />
+                <img onclick="clear_filter()" src="https://icons.getbootstrap.com/icons/x-circle-fill.svg" width="20" height="20" style="vertical-align: middle;"></img></div>
               <ul class="nav flex-column">
-                <li>
-                  <h3>{{sent_ids.length}} graph<span v-show="sent_ids.length > 1">s</span></h3>
-                </li>
-                <li class="nav-item" v-for="sent_id in sent_ids">
+                <li class="nav-item" v-for="sent_id in filtered_sent_ids">
                   <a v-bind:id="sent_id" v-bind:class="{ selected: sent_id == selected_sent_id }" v-on:click="select_graph_event" class="sent nav-link" href="#">
                     {{ sent_id }}
                   </a>
@@ -141,14 +143,14 @@
                 <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ selected_strat }}</h3>
               </div>
               <div v-if="level >= 6" class="column">
-                  <p class="text-center" style="font-size:80px">
-                    ↓<button v-on:click="get_rules_event" class="btn btn-success btn-lg">See {{ nb_rules }} rule<span v-show="nb_rules > 1">s</span></button>↓
-                  </p>
+                <p class="text-center" style="font-size:80px">
+                  ↓<button v-on:click="get_rules_event" class="btn btn-success btn-lg">See {{ nb_rules }} rule<span v-show="nb_rules > 1">s</span></button>↓
+                </p>
               </div>
               <div v-if="level == 5" class="column">
-                  <p class="text-center" style="font-size:80px">
-                    <button class="btn btn-warning btn-lg disabled">No rules apply</button>
-                  </p>
+                <p class="text-center" style="font-size:80px">
+                  <button class="btn btn-warning btn-lg disabled">No rules apply</button>
+                </p>
               </div>
             </div>
 

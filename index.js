@@ -14,6 +14,7 @@ var current = new Vue({
     corpus: 'No corpus loaded',
     sent_ids: [],
     selected_sent_id: "",
+    search: "",
 
     normal_forms: [],
     selected_normal_form: -1, // the index of the currently selected normal_form
@@ -28,8 +29,20 @@ var current = new Vue({
     svg_before: "",
     svg_after: "",
   },
+  computed: {
+    filtered_sent_ids: function() {
+      var self = this;
+      return this.sent_ids.filter(function(sent_id) {
+        return sent_id.toLowerCase().indexOf(self.search.toLowerCase()) >= 0;
+      });
+    }
+  },
   methods: {}
 })
+
+function clear_filter() {
+  current.search = "";
+}
 
 // ====================================================================================================
 $(document).ready(function() {
