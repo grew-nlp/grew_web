@@ -64,7 +64,7 @@ function request(service, form, data_fct) {
       // console.log(response);
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
-        swal(service, resp.message.message, "error");
+        swal(service, resp.message, "error");
       } else {
         data_fct(resp.data);
       }
