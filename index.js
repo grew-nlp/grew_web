@@ -48,6 +48,18 @@ function clear_filter() {
 $(document).ready(function() {
   init();
   connect();
+
+  $(window).on('beforeunload', function() {
+    if (current.level == 0) {
+      return true;
+    } else {
+      var c = confirm();
+      if (c) {
+        return true;
+      } else
+        return false;
+    }
+  });
 });
 
 // ====================================================================================================
