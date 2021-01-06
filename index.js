@@ -118,6 +118,9 @@ function parameters() {
   if (searchParams.has('grs')) {
     url_grs(searchParams.get('grs'));
   }
+  if (searchParams.has('corpus')) {
+    url_corpus(searchParams.get('corpus'));
+  }
 }
 
 // ====================================================================================================
@@ -211,6 +214,24 @@ function url_grs(url) {
       set_level(2)
     };
     $("#button-corpus").click(); // change pane
+  })
+}
+
+// ====================================================================================================
+function url_corpus(url) {
+  var form = new FormData();
+  form.append("session_id", current.session_id);
+  form.append("url", url);
+
+  request("url_corpus", form, function(data) {
+    current.corpus = "From URL";
+    current.sent_ids = resp.data.sent_ids;
+    set_level(1);
+    $("#button-corpus").click(); // change pane
+    if (resp.data.sent_ids.length == 1) {
+      select_graph(resp.data.sent_ids[0]);
+      set_level(2);
+    }
   })
 }
 
