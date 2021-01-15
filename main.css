@@ -70,6 +70,7 @@ button {
 
 .fixed-bottom {
   height: 35px;
+  left:auto;
 }
 
 .column {
