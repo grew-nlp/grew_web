@@ -7,6 +7,8 @@ var current = new Vue({
     session_id: "Not connected",
     level: 0,
 
+    file_input: true, // true --> file    false --> folder
+
     grs: 'No GRS loaded',
     strats: [],
     selected_strat: "",
@@ -150,6 +152,12 @@ function set_level(level) {
 
 
 // ====================================================================================================
+$('#file_folder').change(function() {
+  current.file_input = $(this).prop('checked');
+})
+
+
+// ====================================================================================================
 $('#dep_graph').change(function() {
   var form = new FormData();
   form.append("session_id", current.session_id);
@@ -236,12 +244,12 @@ function url_corpus(url) {
 }
 
 // ====================================================================================================
-// Binding on grs_input
-$("#grs_input").change(function(event) {
+// Binding on grs_file_input
+$("#grs_file_input").change(function(event) {
   const files = event.target.files;
   upload_grs(files[0]);
   // next line: trick to deal with reloading of the same file
-  $("#grs_input").val('');
+  $("#grs_file_input").val('');
 })
 
 // ====================================================================================================
@@ -251,7 +259,7 @@ function upload_grs(file) {
   form.append("file", file);
 
   request("upload_grs", form, function(data) {
-    current.grs = file.name;
+    current.grs = "File: " + file.name;
     current.strats = data;
     if (current.level > 2) {
       set_level(2)
@@ -396,6 +404,80 @@ function select_rule(position) {
     current.svg_after = data.after;
   })
 }
+
+var count_upload = 0;
+
+// ====================================================================================================
+$("#grs_folder_input").change(function(event) {
+  let files = event.target.files;
+  if (files.length > 100) {
+    swal("Cannot upload", "Too much files (more than 100)", "error");
+  } else {
+    let folder = files[0].webkitRelativePath.split("/")[0];
+    let has_main = false;
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].webkitRelativePath == folder + "/main.grs") {
+        has_main = true;
+        break;
+      }
+    }
+    if (has_main) {
+      count_upload = 0;
+      for (let i = 0; i < files.length; i++) {
+        upload_file(files[i]);
+      };
+      load_grs(folder, files.length);
+    } else {
+      swal("Cannot upload", "The folder `" + folder + "` does not contains a file `main.grs`", "error");
+    }
+  }
+})
+
+// ====================================================================================================
+function load_grs(folder, nb_files) {
+  // we have to wait until all files are uploaded
+  if (count_upload == nb_files) {
+    var form = new FormData();
+    form.append("session_id", current.session_id);
+
+    request("load_grs", form, function(data) {
+      current.grs = "Folder: " + folder;
+      current.strats = data;
+      if (current.level > 2) {
+        set_level(2)
+      };
+      $("#button-corpus").click(); // change pane
+    })
+  } else {
+    setTimeout(() => {
+      load_grs(folder, nb_files);
+    }, 200);
+
+  }
+}
+
+
+
+// ====================================================================================================
+function upload_file(file) {
+  var form = new FormData();
+  form.append("session_id", current.session_id);
+  form.append("path", file.webkitRelativePath);
+  form.append("file", file);
+
+  request("upload_file", form, function(data) {
+    console.log("Uploaded ==> " + file.webkitRelativePath);
+    count_upload += 1;
+
+    current.strats = data;
+    if (current.level > 2) {
+      set_level(2)
+    };
+    $("#button-corpus").click(); // change pane
+  })
+}
+
+
 
 // ====================================================================================================
 syncScroll($('#svg_init'), $('#svg_final'));

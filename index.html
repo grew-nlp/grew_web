@@ -56,12 +56,25 @@
           <h3>GRS:</h3>
         </li>
         <li>
+        <input id="file_folder" type="checkbox" checked data-toggle="toggle" data-on="File" data-off="Folder" data-onstyle="success" data-offstyle="success">
+        </li>
+        <li v-show="file_input">
           <div class="custom-file">
-            <input type="file" class="custom-file-input" id="grs_input">
+            <input type="file" class="custom-file-input" id="grs_file_input">
             <label class="custom-file-label">{{ grs }}</label>
           </div>
         </li>
+
+        <li v-show="!file_input">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="grs_folder_input" webkitdirectory />
+            <label class="custom-file-label">{{ grs }}</label>
+          </div>
+        </li>
+
+        <li>
         <input id="dep_graph" type="checkbox" checked data-toggle="toggle" data-on="Dep" data-off="Graph" data-onstyle="success" data-offstyle="success">
+        </li>
       </ul>
     </nav>
 
