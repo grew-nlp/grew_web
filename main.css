@@ -22,7 +22,7 @@
   bottom: 0;
   left: 0;
   z-index: 100; /* Behind the navbar */
-  padding: 56px 0 0; /* Height of navbar */
+  padding: 66px 0 0; /* Height of navbar */
 }
 
 .sidebar-sticky {
@@ -52,7 +52,7 @@
 
 /* -------------------- main -------------------- */
 .main {
-  padding: 56px 0 0; /* Height of navbar */
+  padding: 66px 0 0; /* Height of navbar */
 }
 
 .display-svg   {
@@ -79,4 +79,13 @@ button {
 }
 .row {
   margin: 0;
+}
+
+.navbar .nav-link {
+  background-color: #6c757d !important;
+  color: white;
+}
+
+.navbar .nav-link.active {
+  background-color: #28a745 !important;
 }
