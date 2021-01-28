@@ -101,7 +101,9 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_sent_id }}</h3>
+            <h3 v-for="(obj,key) in selected_meta">
+              <b>{{key}}:</b> {{obj}}
+            </h3>
 
             <div v-show="svg_init != ''" class="display-svg">
               <img v-bind:src="svg_init"> </img>
@@ -145,7 +147,9 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_sent_id }}</h3>
+            <h3 v-for="(obj,key) in selected_meta">
+              <b>{{key}}:</b> {{obj}}
+            </h3>
 
             <div v-show="svg_init != ''" id="svg_init" class="display-svg">
               <img v-bind:src="svg_init"> </img>
@@ -195,7 +199,9 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <h3 v-if="level > 1"><b>sent_id:</b> {{ selected_sent_id }}</h3>
+            <h3 v-for="(obj,key) in selected_meta">
+              <b>{{key}}:</b> {{obj}}
+            </h3>
 
             <div v-show="svg_before != ''" id="svg_before" class="display-svg">
               <img v-bind:src="svg_before"> </img>

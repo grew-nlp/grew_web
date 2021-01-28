@@ -14,6 +14,7 @@ var current = new Vue({
     selected_strat: "",
 
     corpus: 'No corpus loaded',
+    meta: {},
     sent_ids: [],
     selected_sent_id: "",
     search: "",
@@ -32,6 +33,9 @@ var current = new Vue({
     svg_after: "",
   },
   computed: {
+    selected_meta: function () {
+      return this.meta[this.selected_sent_id];
+    },
     filtered_sent_ids: function() {
       var self = this;
       return this.sent_ids.filter(function(sent_id) {
@@ -198,12 +202,14 @@ function upload_corpus(file) {
   form.append("file", file);
 
   request("upload_corpus", form, function(data) {
+    console.log(data);
     current.corpus = file.name;
-    current.sent_ids = resp.data.sent_ids;
+    current.meta = data;
+    current.sent_ids = Object.keys(data); // rely on the ordering ob object keys (may be fragile)
     set_level(1);
     $("#button-corpus").click(); // change pane
-    if (resp.data.sent_ids.length == 1) {
-      select_graph(resp.data.sent_ids[0]);
+    if (current.sent_ids.length == 1) {
+      select_graph(current.sent_ids[0]);
       set_level(2);
     }
   })
@@ -232,12 +238,14 @@ function url_corpus(url) {
   form.append("url", url);
 
   request("url_corpus", form, function(data) {
+    console.log(data);
     current.corpus = "From URL";
-    current.sent_ids = resp.data.sent_ids;
+    current.meta = data;
+    current.sent_ids = Object.keys(data); // rely on the ordering ob object keys (may be fragile)
     set_level(1);
     $("#button-corpus").click(); // change pane
-    if (resp.data.sent_ids.length == 1) {
-      select_graph(resp.data.sent_ids[0]);
+    if (current.sent_ids.length == 1) {
+      select_graph(current.sent_ids[0]);
       set_level(2);
     }
   })
@@ -288,7 +296,7 @@ function select_graph(sent_id) {
   request("select_graph", form, function(data) {
     current.selected_sent_id = sent_id;
     current.svg_init = data;
-  })
+  });
 }
 
 // ====================================================================================================
