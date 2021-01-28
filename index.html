@@ -35,10 +35,10 @@
           <button id="button-corpus" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-corpus">Corpus</button>
         </li>
         <li>
-          <button id="button-rewriting" v-bind:class="{ disabled: level < 4 }" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rewriting">Rewriting</button>
+          <button id="button-rewriting" :disabled="level<4" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rewriting">Rewriting</button>
         </li>
         <li>
-          <button id="button-rules" v-bind:class="{ disabled: level < 7}" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rules">Rules</button>
+          <button id="button-rules" :disabled="level<7" class="btn btn-success btn-sm" data-toggle="pill" href="#pill-rules">Rules</button>
         </li>
       </ul>
 
@@ -109,10 +109,10 @@
 
             <span v-for="strat in strats">
               <span v-if="strat === selected_strat">
-                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" v-bind:class="{ disabled: level < 2 }" class="btn btn-success">{{ strat }}</button>
+                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-success">{{ strat }}</button>
               </span>
               <span v-else>
-                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" v-bind:class="{ disabled: level < 2 }" class="btn btn-secondary">{{ strat }}</button>
+                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-secondary">{{ strat }}</button>
               </span>
             </span>
 
