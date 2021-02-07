@@ -33,7 +33,7 @@ var current = new Vue({
     svg_after: "",
   },
   computed: {
-    selected_meta: function () {
+    selected_meta: function() {
       return this.meta[this.selected_sent_id];
     },
     filtered_sent_ids: function() {
@@ -66,6 +66,17 @@ $(document).ready(function() {
         return false;
     }
   });
+
+  $("#myBtn").click(function() {
+    $('#myModal').modal({
+      backdrop: false,
+    });
+  });
+
+  $('.modal-dialog').draggable({
+    handle: ".modal-header"
+  });
+
 });
 
 // ====================================================================================================
