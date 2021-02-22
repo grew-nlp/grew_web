@@ -439,6 +439,7 @@ $("#grs_folder_input").change(function(event) {
       swal("Cannot upload", "The folder `" + folder + "` does not contains a file `main.grs`", "error");
     }
   }
+  $("#grs_folder_input").val('');
 })
 
 // ====================================================================================================
