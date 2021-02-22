@@ -50,6 +50,9 @@ function clear_filter() {
   current.search = "";
 }
 
+var editor = undefined;
+
+
 // ====================================================================================================
 $(document).ready(function() {
   init();
@@ -70,7 +73,24 @@ $(document).ready(function() {
   $("#myBtn").click(function() {
     $('#myModal').modal({
       backdrop: false,
+      show: true,
     });
+
+
+    // Initialise CodeMirror when the textarea is visible and only once
+    if (editor === undefined) {
+      // Initialise CodeMirror
+      editor = CodeMirror.fromTextArea(document.getElementById("grs-display"), {
+        lineNumbers: true,
+        readOnly: true,
+      });
+    }
+  });
+
+  $('.modal-content').resizable({
+    alsoResize: ".modal-dialog",
+    minHeight: 300,
+    minWidth: 300
   });
 
   $('.modal-dialog').draggable({

@@ -89,3 +89,14 @@ button {
 .navbar .nav-link.active {
   background-color: #28a745 !important;
 }
+
+#myModal {
+  position: relative;
+}
+
+.modal-dialog {
+  position: fixed;
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+}
