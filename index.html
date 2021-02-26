@@ -94,7 +94,7 @@
               <div v-if="sent_ids.length>1">
                 Filter:
                 <input type="text" v-model="search" />
-                <img onclick="clear_filter()" src="https://icons.getbootstrap.com/icons/x-circle-fill.svg" width="20" height="20" style="vertical-align: middle;"></img></div>
+                <img onclick="clear_filter()" src="img/x-circle-fill.svg" width="20" height="20" style="vertical-align: middle;"></img></div>
               <ul class="nav flex-column">
                 <li class="nav-item" v-for="sent_id in filtered_sent_ids">
                   <a v-bind:id="sent_id" v-bind:class="{ selected: sent_id == selected_sent_id }" v-on:click="select_graph_event" class="sent nav-link" href="#">
