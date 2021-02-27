@@ -33,10 +33,6 @@
 
       <ul class="nav nav-pills">
 
-        <li>
-          <button type="button" class="btn btn-primary" id="myBtn">Open Modal</button>
-        </li>
-
         <li class="active">
           <button id="button-corpus" class="nav-link btn btn-sm active" data-toggle="pill" href="#pill-corpus">Corpus</button>
         </li>
@@ -64,6 +60,7 @@
         <li>
           <input id="file_folder" type="checkbox" checked data-toggle="toggle" data-on="File" data-off="Folder" data-onstyle="success" data-offstyle="success">
         </li>
+
         <li v-show="file_input">
           <div class="custom-file">
             <input type="file" class="custom-file-input" id="grs_file_input">
@@ -76,6 +73,10 @@
             <input type="file" class="custom-file-input" id="grs_folder_input" webkitdirectory />
             <label class="custom-file-label">{{ grs }}</label>
           </div>
+        </li>
+
+        <li v-show="file_input && grs != 'No GRS loaded'">
+          <img onclick="clear_filter()" id="view_code" src="img/file-code-fill.svg" width="35" height="35" style="vertical-align: middle;"></img>
         </li>
 
         <li>
@@ -197,7 +198,7 @@
                 </li>
                 <li class="nav-item" v-for="(rule, index) in rules">
                   <a v-bind:id="'R_'+index" v-bind:class="{ selected: index == selected_rule }" v-on:click="select_rule_event" class="sent nav-link" href="#">
-                    R_{{ index + 1 }} • {{ rule }}
+                    R_{{ index + 1 }} • {{ rule[0] }}
                   </a>
                 </li>
               </ul>
@@ -243,33 +244,32 @@
         </li>
       </ul>
     </div>
-  </div>
 
 
 
 
 
-  <!-- The Modal -->
-  <div class="modal fade" id="myModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
+    <!-- The Modal for code viewing -->
+    <div class="modal fade" id="code_modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
 
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Modal Heading</h4>
-          <button type="button" class="close" data-dismiss="modal">×</button>
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">{{ grs }}</h4>
+            <button type="button" class="close" data-dismiss="modal">×</button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <textarea id="grs_display"></textarea>
+          </div>
+
         </div>
-
-        <!-- Modal body -->
-        <div class="modal-body">
-            <textarea id="grs-display"></textarea>
-        </div>
-
       </div>
     </div>
+
   </div>
-
-
 
 
 

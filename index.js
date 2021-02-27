@@ -10,8 +10,10 @@ var current = new Vue({
     file_input: true, // true --> file    false --> folder
 
     grs: 'No GRS loaded',
+    grs_data: "",
     strats: [],
     selected_strat: "",
+    editor: undefined,
 
     corpus: 'No corpus loaded',
     meta: {},
@@ -41,6 +43,15 @@ var current = new Vue({
       return this.sent_ids.filter(function(sent_id) {
         return sent_id.toLowerCase().indexOf(self.search.toLowerCase()) >= 0;
       });
+    },
+    grs_length: function () {
+      var length = 0;
+      for(var i = 0; i < this.grs_data.length; ++i){
+          if(this.grs_data[i] == '\n') {
+              length++;
+          }
+      }
+      return length;
     }
   },
   methods: {}
@@ -49,9 +60,6 @@ var current = new Vue({
 function clear_filter() {
   current.search = "";
 }
-
-var editor = undefined;
-
 
 // ====================================================================================================
 $(document).ready(function() {
@@ -70,21 +78,21 @@ $(document).ready(function() {
     }
   });
 
-  $("#myBtn").click(function() {
-    $('#myModal').modal({
+  $("#view_code").click(function() {
+    $('#code_modal').modal({
       backdrop: false,
       show: true,
     });
 
-
     // Initialise CodeMirror when the textarea is visible and only once
-    if (editor === undefined) {
-      // Initialise CodeMirror
-      editor = CodeMirror.fromTextArea(document.getElementById("grs-display"), {
+    if (current.editor === undefined) {
+      current.editor = CodeMirror.fromTextArea(document.getElementById("grs_display"), {
         lineNumbers: true,
         readOnly: true,
+        theme: "neat",
       });
     }
+    current.editor.setValue(current.grs_data);
   });
 
   $('.modal-content').resizable({
@@ -292,7 +300,16 @@ $("#grs_file_input").change(function(event) {
 })
 
 // ====================================================================================================
+function update_grs(data) {
+  current.grs_data = data;
+  if (current.editor !== undefined) {
+    current.editor.setValue(data);
+  }
+}
+
+// ====================================================================================================
 function upload_grs(file) {
+
   var form = new FormData();
   form.append("session_id", current.session_id);
   form.append("file", file);
@@ -304,6 +321,13 @@ function upload_grs(file) {
       set_level(2)
     };
     $("#button-corpus").click(); // change pane
+
+    // read data for current.editor (see https://stackoverflow.com/questions/3582671)
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      update_grs(e.target.result);
+    };
+    reader.readAsText(file);
   })
 }
 
@@ -433,6 +457,10 @@ function select_rule(position) {
   set_level(8);
   current.selected_rule = position;
   console.log("[select_rule] " + position);
+
+  var rule = current.rules[position];
+  current.editor.scrollIntoView({line: current.grs_length});
+  current.editor.scrollIntoView({line: rule[1] - 1});
 
   var form = new FormData();
   form.append("session_id", current.session_id);
