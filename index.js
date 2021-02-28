@@ -13,7 +13,7 @@ var current = new Vue({
     grs_data: "",
     strats: [],
     selected_strat: "",
-    editor: undefined,
+    rule_viewer: undefined,
 
     corpus: 'No corpus loaded',
     meta: {},
@@ -85,27 +85,38 @@ $(document).ready(function() {
     });
 
     // Initialise CodeMirror when the textarea is visible and only once
-    if (current.editor === undefined) {
-      current.editor = CodeMirror.fromTextArea(document.getElementById("grs_display"), {
+    if (current.rule_viewer === undefined) {
+      current.rule_viewer = CodeMirror.fromTextArea(document.getElementById("grs_display"), {
         lineNumbers: true,
         readOnly: true,
         theme: "neat",
       });
     }
-    current.editor.setValue(current.grs_data);
+    current.rule_viewer.setValue(current.grs_data);
   });
 
-  $('.modal-content').resizable({
+$('.modal-content').resizable({
     alsoResize: ".modal-dialog",
     minHeight: 300,
     minWidth: 300
-  });
+});
 
   $('.modal-dialog').draggable({
     handle: ".modal-header"
-  });
+});
 
 });
+
+// ====================================================================================================
+function modal_resize() {
+  if (current.rule_viewer !== undefined) {
+    // ugly hack to make editor follow the size on the modal
+    // NB: the height of modal-body in correcly updated when increasing but not when decreading!
+    // TODO?: replace 100 by a value computed at the beginning
+    $('#grs_display + div').height($('.modal-content').height() - 100);
+    current.rule_viewer.refresh();
+  }
+}
 
 // ====================================================================================================
 function init() {
@@ -302,8 +313,8 @@ $("#grs_file_input").change(function(event) {
 // ====================================================================================================
 function update_grs(data) {
   current.grs_data = data;
-  if (current.editor !== undefined) {
-    current.editor.setValue(data);
+  if (current.rule_viewer !== undefined) {
+    current.rule_viewer.setValue(data);
   }
 }
 
@@ -322,7 +333,7 @@ function upload_grs(file) {
     };
     $("#button-corpus").click(); // change pane
 
-    // read data for current.editor (see https://stackoverflow.com/questions/3582671)
+    // read data for current.rule_viewer (see https://stackoverflow.com/questions/3582671)
     var reader = new FileReader();
     reader.onload = function(e) {
       update_grs(e.target.result);
@@ -458,9 +469,11 @@ function select_rule(position) {
   current.selected_rule = position;
   console.log("[select_rule] " + position);
 
-  var rule = current.rules[position];
-  current.editor.scrollIntoView({line: current.grs_length});
-  current.editor.scrollIntoView({line: rule[1] - 1});
+  if (current.rule_viewer !== undefined) {
+    var rule = current.rules[position];
+    current.rule_viewer.scrollIntoView({line: current.grs_length});
+    current.rule_viewer.scrollIntoView({line: rule[1] - 1});
+  }
 
   var form = new FormData();
   form.append("session_id", current.session_id);
