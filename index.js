@@ -88,7 +88,7 @@ $(document).ready(function() {
     if (current.rule_viewer === undefined) {
       current.rule_viewer = CodeMirror.fromTextArea(document.getElementById("grs_display"), {
         lineNumbers: true,
-        readOnly: true,
+        // readOnly: true,
         theme: "neat",
       });
     }
@@ -112,8 +112,8 @@ function modal_resize() {
   if (current.rule_viewer !== undefined) {
     // ugly hack to make editor follow the size on the modal
     // NB: the height of modal-body in correcly updated when increasing but not when decreading!
-    // TODO?: replace 100 by a value computed at the beginning
-    $('#grs_display + div').height($('.modal-content').height() - 100);
+    // TODO?: replace 170 by a value computed at the beginning
+    $('#grs_display + div').height($('.modal-content').height() - 170);
     current.rule_viewer.refresh();
   }
 }
@@ -152,7 +152,7 @@ function request(service, form, data_fct) {
     })
     .fail(function() {
       if (service != "connect") {
-        swal("Connection fail", "The grew_back service is not available.", "error");
+        swal("Connection fail", "The grew_back service `" + service + "` is not available.", "error");
       } else {
         window.location.replace("./maintenance.html");
       }
@@ -339,6 +339,23 @@ function upload_grs(file) {
       update_grs(e.target.result);
     };
     reader.readAsText(file);
+  })
+}
+
+// ====================================================================================================
+function upload_grs_from_editor() {
+
+  var form = new FormData();
+  form.append("session_id", current.session_id);
+  form.append("code", current.rule_viewer.getValue());
+
+  request("upload_grs_code", form, function(data) {
+    current.grs = "Locally edited";
+    current.strats = data;
+    if (current.level > 2) {
+      set_level(2)
+    };
+    $("#button-corpus").click(); // change pane
   })
 }
 
