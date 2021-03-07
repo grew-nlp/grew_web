@@ -118,14 +118,30 @@
               <img v-bind:src="svg_init"> </img>
             </div>
 
-            <span v-for="strat in strats">
-              <span v-if="strat === selected_strat">
-                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-success">{{ strat }}</button>
+            <!-- <p> -->
+            <p v-if="grs_files.length>1">
+              GRS files:
+              <span v-for="grs_file in grs_files">
+                <span v-if="grs_file === selected_grs_file">
+                  <button type="button" v-bind:id="'grs_file-' + grs_file" v-on:click="select_grs_file" class="btn btn-sm btn-success">{{ grs_file }}</button>
+                </span>
+                <span v-else>
+                  <button type="button" v-bind:id="'grs_file-' + grs_file" v-on:click="select_grs_file" class="btn btn-sm btn-secondary">{{ grs_file }}</button>
+                </span>
               </span>
-              <span v-else>
-                <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-secondary">{{ strat }}</button>
+            </p>
+
+            <p v-if="strats.length>0">
+              Strategies:
+              <span v-for="strat in strats">
+                <span v-if="strat === selected_strat">
+                  <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-sm btn-success">{{ strat }}</button>
+                </span>
+                <span v-else>
+                  <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-sm btn-secondary">{{ strat }}</button>
+                </span>
               </span>
-            </span>
+            </p>
 
             <p v-if="level == 3" class="text-center" style="font-size:80px">
               <button class="btn btn-warning btn-lg disabled">No graphs produced</button>

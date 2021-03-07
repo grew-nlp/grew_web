@@ -11,6 +11,9 @@ var current = new Vue({
 
     grs: 'No GRS loaded',
     grs_data: "",
+    grs_files: [], // used for folder loading
+    selected_grs_file: "",
+
     strats: [],
     selected_strat: "",
     rule_viewer: undefined,
@@ -44,12 +47,12 @@ var current = new Vue({
         return sent_id.toLowerCase().indexOf(self.search.toLowerCase()) >= 0;
       });
     },
-    grs_length: function () {
+    grs_length: function() {
       var length = 0;
-      for(var i = 0; i < this.grs_data.length; ++i){
-          if(this.grs_data[i] == '\n') {
-              length++;
-          }
+      for (var i = 0; i < this.grs_data.length; ++i) {
+        if (this.grs_data[i] == '\n') {
+          length++;
+        }
       }
       return length;
     }
@@ -95,15 +98,15 @@ $(document).ready(function() {
     current.rule_viewer.setValue(current.grs_data);
   });
 
-$('.modal-content').resizable({
+  $('.modal-content').resizable({
     alsoResize: ".modal-dialog",
     minHeight: 300,
     minWidth: 300
-});
+  });
 
   $('.modal-dialog').draggable({
     handle: ".modal-header"
-});
+  });
 
 });
 
@@ -488,8 +491,12 @@ function select_rule(position) {
 
   if (current.rule_viewer !== undefined) {
     var rule = current.rules[position];
-    current.rule_viewer.scrollIntoView({line: current.grs_length});
-    current.rule_viewer.scrollIntoView({line: rule[1] - 1});
+    current.rule_viewer.scrollIntoView({
+      line: current.grs_length
+    });
+    current.rule_viewer.scrollIntoView({
+      line: rule[1] - 1
+    });
   }
 
   var form = new FormData();
@@ -502,7 +509,7 @@ function select_rule(position) {
   })
 }
 
-var count_upload = 0;
+var count_upload = 0; // global var TODO: useless with grs file choosing ?
 
 // ====================================================================================================
 $("#grs_folder_input").change(function(event) {
@@ -510,123 +517,162 @@ $("#grs_folder_input").change(function(event) {
   if (files.length > 100) {
     swal("Cannot upload", "Too much files (more than 100)", "error");
   } else {
-    let folder = files[0].webkitRelativePath.split("/")[0];
-    let has_main = false;
+    count_upload = 0;
     for (let i = 0; i < files.length; i++) {
-      if (files[i].webkitRelativePath == folder + "/main.grs") {
-        has_main = true;
-        break;
+      upload_file(files[i]);
+      let filename = files[i].webkitRelativePath;
+      if (filename.split('.').pop() == "grs") {
+        let slash_pos = filename.indexOf('/');
+        current.grs_files.push(filename.slice(slash_pos + 1));
       }
-    }
-    if (has_main) {
-      count_upload = 0;
-      for (let i = 0; i < files.length; i++) {
-        upload_file(files[i]);
-      };
-      load_grs(folder, files.length);
-    } else {
-      swal("Cannot upload", "The folder `" + folder + "` does not contains a file `main.grs`", "error");
-    }
+    };
+
+
+
+
+    // let folder = files[0].webkitRelativePath.split("/")[0];
+    // let has_main = false;
+    // for (let i = 0; i < files.length; i++) {
+    //   if (files[i].webkitRelativePath == folder + "/main.grs") {
+    //     has_main = true;
+    //     break;
+    //   }
+    // }
+    // if (has_main) {
+    //   count_upload = 0;
+    //   for (let i = 0; i < files.length; i++) {
+    //     upload_file(files[i]);
+    //   };
+    //   load_grs(folder, files.length);
+    // } else {
+    //   swal("Cannot upload", "The folder `" + folder + "` does not contains a file `main.grs`", "error");
+    // }
   }
   $("#grs_folder_input").val('');
 })
 
 // ====================================================================================================
-function load_grs(folder, nb_files) {
-  // we have to wait until all files are uploaded
-  if (count_upload == nb_files) {
-    var form = new FormData();
-    form.append("session_id", current.session_id);
-
-    request("load_grs", form, function(data) {
-      current.grs = "Folder: " + folder;
-      current.strats = data;
-      if (current.level > 2) {
-        set_level(2)
-      };
-      $("#button-corpus").click(); // change pane
-    })
-  } else {
-    setTimeout(() => {
-      load_grs(folder, nb_files);
-    }, 200);
-
+function select_grs_file() {
+  const grs_file = event.target.id.slice(9) // remove the prefix "grs_file-"
+  if (grs_file != current.selected_grs_file) {
+    current.selected_grs_file = grs_file;
+    console.log("select_grs_file");
+    console.log(grs_file);
+    load_grs(grs_file);
   }
 }
-
-
-
 // ====================================================================================================
-function upload_file(file) {
+function load_grs(grs_file) {
+  // we have to wait until all files are uploaded
+  //if (count_upload == nb_files) {
   var form = new FormData();
   form.append("session_id", current.session_id);
-  form.append("path", file.webkitRelativePath);
-  form.append("file", file);
+  form.append("grs_file", grs_file);
 
-  request("upload_file", form, function(data) {
-    console.log("Uploaded ==> " + file.webkitRelativePath);
-    count_upload += 1;
-
+  request("load_grs", form, function(data) {
+    // current.grs = "Folder: " + folder;
     current.strats = data;
     if (current.level > 2) {
       set_level(2)
     };
     $("#button-corpus").click(); // change pane
   })
+  // } else {
+  //   setTimeout(() => {
+  //     load_grs(folder, nb_files);
+  //   }, 200);
+  // }}
 }
 
+  // ====================================================================================================
+  function OLD_load_grs(folder, nb_files) {
+    // we have to wait until all files are uploaded
+    if (count_upload == nb_files) {
+      var form = new FormData();
+      form.append("session_id", current.session_id);
 
-
-// ====================================================================================================
-syncScroll($('#svg_init'), $('#svg_final'));
-syncScroll($('#svg_before'), $('#svg_after'));
-
-
-/***
- *   Synchronize Scroll
- *   Synchronizes the horizontal scrolling of two elements.
- *   The elements can have different content widths.
- *
- *   @param $el1 {Object}
- *       Native DOM element or jQuery selector.
- *       First element to sync.
- *   @param $el2 {Object}
- *       Native DOM element or jQuery selector.
- *       Second element to sync.
- *
- *  adapted from https://stackoverflow.com/questions/18952623/synchronized-scrolling-using-jquery#answer-27007581
- *
- */
-function syncScroll(el1, el2) {
-  var $el1 = $(el1);
-  var $el2 = $(el2);
-
-  // Lets us know when a scroll is organic
-  // or forced from the synced element.
-  var forcedScroll = false;
-
-  // Catch our elements' scroll events and
-  // syncronize the related element.
-  $el1.scroll(function() {
-    performScroll($el1, $el2);
-  });
-  $el2.scroll(function() {
-    performScroll($el2, $el1);
-  });
-
-  // Perform the scroll of the synced element
-  // based on the scrolled element.
-  function performScroll($scrolled, $toScroll) {
-    if (forcedScroll) return (forcedScroll = false);
-    var percent = ($scrolled.scrollLeft() / ($scrolled[0].scrollWidth - $scrolled.outerWidth())) * 100;
-    setScrollLeftFromPercent($toScroll, percent);
+      request("load_grs", form, function(data) {
+        current.grs = "Folder: " + folder;
+        current.strats = data;
+        if (current.level > 2) {
+          set_level(2)
+        };
+        $("#button-corpus").click(); // change pane
+      })
+    } else {
+      setTimeout(() => {
+        load_grs(folder, nb_files);
+      }, 200);
+    }
   }
 
-  // Scroll to a position in the given
-  // element based on a percent.
-  function setScrollLeftFromPercent($el, percent) {
-    var scrollLeftPos = (percent / 100) * ($el[0].scrollWidth - $el.outerWidth());
-    forcedScroll = true;
-    $el.scrollLeft(scrollLeftPos);
+
+
+  // ====================================================================================================
+  function upload_file(file) {
+    var form = new FormData();
+    form.append("session_id", current.session_id);
+    form.append("path", file.webkitRelativePath);
+    form.append("file", file);
+
+    request("upload_file", form, function(data) {
+      console.log("Uploaded ==> " + file.webkitRelativePath);
+      count_upload += 1;
+    })
   }
-}
+
+
+
+  // ====================================================================================================
+  syncScroll($('#svg_init'), $('#svg_final'));
+  syncScroll($('#svg_before'), $('#svg_after'));
+
+
+  /***
+   *   Synchronize Scroll
+   *   Synchronizes the horizontal scrolling of two elements.
+   *   The elements can have different content widths.
+   *
+   *   @param $el1 {Object}
+   *       Native DOM element or jQuery selector.
+   *       First element to sync.
+   *   @param $el2 {Object}
+   *       Native DOM element or jQuery selector.
+   *       Second element to sync.
+   *
+   *  adapted from https://stackoverflow.com/questions/18952623/synchronized-scrolling-using-jquery#answer-27007581
+   *
+   */
+  function syncScroll(el1, el2) {
+    var $el1 = $(el1);
+    var $el2 = $(el2);
+
+    // Lets us know when a scroll is organic
+    // or forced from the synced element.
+    var forcedScroll = false;
+
+    // Catch our elements' scroll events and
+    // syncronize the related element.
+    $el1.scroll(function() {
+      performScroll($el1, $el2);
+    });
+    $el2.scroll(function() {
+      performScroll($el2, $el1);
+    });
+
+    // Perform the scroll of the synced element
+    // based on the scrolled element.
+    function performScroll($scrolled, $toScroll) {
+      if (forcedScroll) return (forcedScroll = false);
+      var percent = ($scrolled.scrollLeft() / ($scrolled[0].scrollWidth - $scrolled.outerWidth())) * 100;
+      setScrollLeftFromPercent($toScroll, percent);
+    }
+
+    // Scroll to a position in the given
+    // element based on a percent.
+    function setScrollLeftFromPercent($el, percent) {
+      var scrollLeftPos = (percent / 100) * ($el[0].scrollWidth - $el.outerWidth());
+      forcedScroll = true;
+      $el.scrollLeft(scrollLeftPos);
+    }
+  }
