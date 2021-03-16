@@ -5,7 +5,7 @@
   <title>Grew-web</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -110,6 +110,35 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <div class="alert alert-secondary" role="alert" v-if="grs_files.length + strats.length>0">
+              <h5>
+                <span v-if="grs_files.length>0">
+                  GRS file{{ grs_files.length > 1 ? "s" : "" }}:
+                  <span v-for="grs_file in grs_files">
+                    <span v-if="grs_file === selected_grs_file">
+                      <button type="button" v-bind:id="'grs_file-' + grs_file" v-on:click="select_grs_file" class="btn btn-sm btn-success">{{ grs_file }}</button>
+                    </span>
+                    <span v-else>
+                      <button type="button" v-bind:id="'grs_file-' + grs_file" v-on:click="select_grs_file" class="btn btn-sm btn-secondary">{{ grs_file }}</button>
+                    </span>
+                  </span>
+                </span>
+                <span v-if="grs_files.length * strats.length>0" style="padding: 10px;">•••</span>
+                <span v-if="strats.length>0">
+                  Strateg{{ strats.length > 1 ? "ies" : "y" }}:
+                  <span v-for="strat in strats">
+                    <span v-if="strat === selected_strat">
+                      <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-sm btn-success">{{ strat }}</button>
+                    </span>
+                    <span v-else>
+                      <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-sm btn-secondary">{{ strat }}</button>
+                    </span>
+                  </span>
+                </span>
+              </h5>
+            </div>
+
             <h3 v-for="(obj,key) in selected_meta">
               <b>{{key}}:</b> {{obj}}
             </h3>
@@ -118,36 +147,12 @@
               <img v-bind:src="svg_init"> </img>
             </div>
 
-            <!-- <p> -->
-            <p v-if="grs_files.length>1">
-              GRS files:
-              <span v-for="grs_file in grs_files">
-                <span v-if="grs_file === selected_grs_file">
-                  <button type="button" v-bind:id="'grs_file-' + grs_file" v-on:click="select_grs_file" class="btn btn-sm btn-success">{{ grs_file }}</button>
-                </span>
-                <span v-else>
-                  <button type="button" v-bind:id="'grs_file-' + grs_file" v-on:click="select_grs_file" class="btn btn-sm btn-secondary">{{ grs_file }}</button>
-                </span>
-              </span>
-            </p>
-
-            <p v-if="strats.length>0">
-              Strategies:
-              <span v-for="strat in strats">
-                <span v-if="strat === selected_strat">
-                  <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-sm btn-success">{{ strat }}</button>
-                </span>
-                <span v-else>
-                  <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-sm btn-secondary">{{ strat }}</button>
-                </span>
-              </span>
-            </p>
-
-            <p v-if="level == 3" class="text-center" style="font-size:80px">
-              <button class="btn btn-warning btn-lg disabled">No graphs produced</button>
-            </p>
+            <div class="alert alert-warning" v-if="level == 3">
+              <strong>No graphs produced</strong>
+            </div>
 
           </div>
+
         </div>
 
       </div>
@@ -172,6 +177,13 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="alert alert-secondary" role="alert">
+              <h5>
+                <span v-if="grs_files.length>0"><b>grs file:</b> {{ selected_grs_file }}</span>
+                <span v-if="grs_files.length>0" style="padding: 10px;">•••</span>
+                <span><b>strategy:</b> {{ selected_strat }}</span>
+              </h5>
+            </div>
             <h3 v-for="(obj,key) in selected_meta">
               <b>{{key}}:</b> {{obj}}
             </h3>
@@ -182,18 +194,15 @@
 
             <div class="row">
               <div class="column">
-                <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ selected_strat }}</h3>
               </div>
               <div v-if="level >= 6" class="column">
                 <p class="text-center" style="font-size:80px">
                   ↓<button v-on:click="get_rules_event" class="btn btn-success btn-lg">See {{ nb_rules }} rule{{ nb_rules > 1 ? "s" : "" }}</button>↓
                 </p>
               </div>
-              <div v-if="level == 5" class="column">
-                <p class="text-center" style="font-size:80px">
-                  <button class="btn btn-warning btn-lg disabled">No rules apply</button>
-                </p>
-              </div>
+            </div>
+            <div class="alert alert-warning" v-if="level == 5">
+              <strong>No rules apply</strong>
             </div>
 
             <div v-show="svg_final != ''" id="svg_final" class="display-svg">
@@ -224,6 +233,13 @@
           </nav>
 
           <div class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="alert alert-secondary" role="alert">
+              <h5>
+                <span v-if="grs_files.length>0"><b>grs file:</b> {{ selected_grs_file }}</span>
+                <span v-if="grs_files.length>0" style="padding: 10px;">•••</span>
+                <span><b>strategy:</b> {{ selected_strat }}</span>
+              </h5>
+            </div>
             <h3 v-for="(obj,key) in selected_meta">
               <b>{{key}}:</b> {{obj}}
             </h3>
@@ -234,7 +250,6 @@
 
             <div class="row">
               <div class="column">
-                <h3 v-if="level > 2" style="margin-top: 50px;"><b>strat:</b> {{ selected_strat }}</h3>
               </div>
               <div class="column">
                 <p v-if="level > 7" class="text-center" style="font-size:80px">↓</p>
