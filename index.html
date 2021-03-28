@@ -126,7 +126,7 @@
                 </span>
                 <span v-if="grs_files.length * strats.length>0" style="padding: 10px;">•••</span>
                 <span v-if="strats.length>0">
-                  Strateg{{ strats.length > 1 ? "ies" : "y" }}:
+                  {{ strat_kind }}:
                   <span v-for="strat in strats">
                     <span v-if="strat === selected_strat">
                       <button type="button" v-bind:id="'strat-' + strat" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-sm btn-success">{{ strat }}</button>

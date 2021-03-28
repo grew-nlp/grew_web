@@ -18,8 +18,10 @@ var current = new Vue({
     count_upload: 0,
 
     strats: [],
+    strat_kind: "",
+
     selected_strat: "",
-    rule_viewer: undefined,
+    code_editor: undefined,
 
     corpus: 'No corpus loaded',
     meta: {},
@@ -51,6 +53,7 @@ var current = new Vue({
         return sent_id.toLowerCase().indexOf(self.search.toLowerCase()) >= 0;
       });
     },
+    // compute the number of lines in `grs_data`
     grs_length: function() {
       var length = 0;
       for (var i = 0; i < this.grs_data.length; ++i) {
@@ -67,7 +70,7 @@ var current = new Vue({
     upload_grs_from_editor() {
       var form = new FormData();
       form.append("session_id", current.session_id);
-      form.append("code", current.rule_viewer.getValue());
+      form.append("code", current.code_editor.getValue());
 
       request("upload_grs_code", form, function(data) {
         current.grs = "Locally edited";
@@ -155,20 +158,24 @@ $(document).ready(function() {
   });
 
   $("#view_code").click(function() {
-    $('#code_modal').modal({
-      backdrop: false,
-      show: true,
-    });
+    // if `code_modal` already shown -> nothing to do
+    if (!$('#code_modal').hasClass('show')) {
 
-    // Initialise CodeMirror when the textarea is visible and only once
-    if (current.rule_viewer === undefined) {
-      current.rule_viewer = CodeMirror.fromTextArea(document.getElementById("grs_display"), {
-        lineNumbers: true,
-        // readOnly: true,
-        theme: "neat",
+      $('#code_modal').modal({
+        backdrop: false,
+        show: true,
       });
+
+      // Initialise CodeMirror when the textarea is visible and only once
+      if (current.code_editor === undefined) {
+        current.code_editor = CodeMirror.fromTextArea(document.getElementById("grs_display"), {
+          lineNumbers: true,
+          // readOnly: true,
+          theme: "neat",
+        });
+      }
+      current.code_editor.setValue(current.grs_data);
     }
-    current.rule_viewer.setValue(current.grs_data);
   });
 
   $('.modal-content').resizable({
@@ -185,12 +192,12 @@ $(document).ready(function() {
 
 // ====================================================================================================
 function modal_resize() {
-  if (current.rule_viewer !== undefined) {
+  if (current.code_editor !== undefined) {
     // ugly hack to make editor follow the size on the modal
     // NB: the height of modal-body in correcly updated when increasing but not when decreading!
     // TODO?: replace 170 by a value computed at the beginning
     $('#grs_display + div').height($('.modal-content').height() - 170);
-    current.rule_viewer.refresh();
+    current.code_editor.refresh();
   }
 }
 
@@ -206,6 +213,7 @@ function init() {
 
 // ====================================================================================================
 function request(service, form, data_fct) {
+  console.log("Send request to service: " + service);
   var settings = {
     "url": current.grew_back_url + service,
     "method": "POST",
@@ -218,11 +226,11 @@ function request(service, form, data_fct) {
 
   $.ajax(settings)
     .done(function(response) {
-      // console.log(response);
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
         swal(service, resp.message, "error");
       } else {
+        console.log("Success request to service: " + service + "-->" + resp.data);
         data_fct(resp.data);
       }
     })
@@ -328,7 +336,6 @@ function upload_corpus(file) {
   form.append("file", file);
 
   request("upload_corpus", form, function(data) {
-    console.log(data);
     current.corpus = file.name;
     current.meta = data;
     current.sent_ids = Object.keys(data); // rely on the ordering ob object keys (may be fragile)
@@ -342,6 +349,23 @@ function upload_corpus(file) {
 }
 
 // ====================================================================================================
+function update_strats(data) {
+  if (data.strategies !== undefined) {
+    current.strats = data.strategies;
+    current.strat_kind = "strategies";
+  } else if (data.packages !== undefined) {
+    current.strats = data.packages;
+    current.strat_kind = "packages";
+  } else if (data.rules !== undefined) {
+    current.strats = data.rules;
+    current.strat_kind = "rules";
+  } else {
+    current.strats = [];
+    current.strat_kind = "__No strat defined__";
+  }
+}
+
+// ====================================================================================================
 function url_grs(url) {
   var form = new FormData();
   form.append("session_id", current.session_id);
@@ -349,7 +373,8 @@ function url_grs(url) {
 
   request("url_grs", form, function(data) {
     current.grs = "From URL";
-    current.strats = data;
+    update_strats(data);
+    update_code_editor(data.code);
     if (current.level > 2) {
       set_level(2)
     };
@@ -364,10 +389,9 @@ function url_corpus(url) {
   form.append("url", url);
 
   request("url_corpus", form, function(data) {
-    console.log(data);
     current.corpus = "From URL";
     current.meta = data;
-    current.sent_ids = Object.keys(data); // rely on the ordering ob object keys (may be fragile)
+    current.sent_ids = Object.keys(data); // rely on the ordering of object keys (may be fragile)
     set_level(1);
     $("#button-corpus").click(); // change pane
     if (current.sent_ids.length == 1) {
@@ -387,14 +411,6 @@ $("#grs_file_input").change(function(event) {
 })
 
 // ====================================================================================================
-function update_grs(data) {
-  current.grs_data = data;
-  if (current.rule_viewer !== undefined) {
-    current.rule_viewer.setValue(data);
-  }
-}
-
-// ====================================================================================================
 function upload_grs(file) {
 
   var form = new FormData();
@@ -404,25 +420,34 @@ function upload_grs(file) {
   request("upload_grs", form, function(data) {
     current.grs_files = [];
     current.grs = "File: " + file.name;
-    current.strats = data;
+    update_strats(data);
     if (current.level > 2) {
       set_level(2)
     };
     $("#button-corpus").click(); // change pane
 
-    // read data for current.rule_viewer (see https://stackoverflow.com/questions/3582671)
+    // read data for current.code_editor (see https://stackoverflow.com/questions/3582671)
     var reader = new FileReader();
     reader.onload = function(e) {
-      update_grs(e.target.result);
+      update_code_editor(e.target.result)
     };
     reader.readAsText(file);
   })
 }
 
 // ====================================================================================================
+function update_code_editor(code) {
+  // When the modal is not shown, the update is ineffective -> store value in `grs_data` and `code_editor` will be updated when modal becomes visible
+  current.grs_data = code;
+  if (current.code_editor !== undefined) {
+    current.code_editor.setValue(code);
+  }
+}
+
+// ====================================================================================================
 function select_graph(sent_id) {
-  set_level(2);
   console.log("[select_graph] " + sent_id);
+  set_level(2);
 
   var form = new FormData();
   form.append("session_id", current.session_id);
@@ -436,8 +461,8 @@ function select_graph(sent_id) {
 
 // ====================================================================================================
 function rewrite(strat) {
-  set_level(4);
   console.log("[rewrite] " + strat);
+  set_level(4);
 
   var form = new FormData();
   form.append("session_id", current.session_id);
@@ -461,8 +486,8 @@ function rewrite(strat) {
 
 // ====================================================================================================
 function select_normal_form(position) {
-  current.selected_normal_form = position;
   console.log("[select_normal_form] " + position);
+  current.selected_normal_form = position;
 
   current.nb_rules = current.normal_forms[position];
 
@@ -505,16 +530,16 @@ function get_rules() {
 
 // ====================================================================================================
 function select_rule(position) {
+  console.log("[select_rule] " + position);
   set_level(8);
   current.selected_rule = position;
-  console.log("[select_rule] " + position);
 
-  if (current.rule_viewer !== undefined) {
+  if (current.code_editor !== undefined) {
     var rule = current.rules[position];
-    current.rule_viewer.scrollIntoView({
+    current.code_editor.scrollIntoView({
       line: current.grs_length
     });
-    current.rule_viewer.scrollIntoView({
+    current.code_editor.scrollIntoView({
       line: rule[1] - 1
     });
   }
@@ -561,7 +586,6 @@ $("#grs_folder_input").change(function(event) {
 function load_grs(grs_file) {
   // we have to wait until all files are uploaded
   if (current.count_upload == current.nb_files) {
-    console.log("###1");
     var form = new FormData();
     form.append("session_id", current.session_id);
     form.append("grs_file", grs_file);
@@ -576,7 +600,6 @@ function load_grs(grs_file) {
       current.selected_grs_file = grs_file;
     })
   } else {
-    console.log("###2");
     // run again the function after some delay if all files are not uploaded
     setTimeout(() => {
       load_grs(grs_file);
