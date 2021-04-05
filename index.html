@@ -87,6 +87,32 @@
       </ul>
     </nav>
 
+    <!-- The Modal for code viewing -->
+    <div class="modal fade" id="code_modal">
+      <div class="modal-dialog">
+        <div class="modal-content" onresize="modal_resize()">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">{{ grs }}</h4>
+            <button type="button" class="close" data-dismiss="modal">×</button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <textarea id="grs_display"></textarea>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-footer">
+            <button v-on:click="upload_grs_from_editor" class="btn btn-secondary">Upload</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
     <div class="tab-content">
       <!-- *************** pane 1: corpus view *************** -->
       <div id="pill-corpus" class="main tab-pane fade in active show">
@@ -282,30 +308,6 @@
 
 
 
-    <!-- The Modal for code viewing -->
-    <div class="modal fade" id="code_modal">
-      <div class="modal-dialog">
-        <div class="modal-content" onresize="modal_resize()">
-
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">{{ grs }}</h4>
-            <button type="button" class="close" data-dismiss="modal">×</button>
-          </div>
-
-          <!-- Modal body -->
-          <div class="modal-body">
-            <textarea id="grs_display"></textarea>
-          </div>
-
-          <!-- Modal body -->
-          <div class="modal-footer">
-            <button v-on:click="upload_grs_from_editor" class="btn btn-secondary">Upload</button>
-          </div>
-
-        </div>
-      </div>
-    </div>
 
   </div>
 
