@@ -21,6 +21,7 @@ var current = new Vue({
     strat_kind: "",
 
     selected_strat: "",
+    local_strat: "",
     code_editor: undefined,
 
     corpus: 'No corpus loaded',
@@ -85,10 +86,15 @@ var current = new Vue({
     // ------------------------------------------------------------
     rewrite_event(event) {
       const strat = event.target.id.slice(6) // remove the prefix "strat-"
-      if (strat != current.selected_strat) {
-        rewrite(strat);
+      console.log("###strat=" + strat);
+      if (strat == "__local__") {
+        rewrite(current.local_strat);
       } else {
-        $("#button-rewriting").click(); // change pane
+        if (strat != current.selected_strat) {
+          rewrite(strat);
+        } else {
+          $("#button-rewriting").click(); // change pane
+        }
       }
     },
 
@@ -352,13 +358,13 @@ function upload_corpus(file) {
 function update_strats(data) {
   if (data.strategies !== undefined) {
     current.strats = data.strategies;
-    current.strat_kind = "strategies";
+    current.strat_kind = "Strategies";
   } else if (data.packages !== undefined) {
     current.strats = data.packages;
-    current.strat_kind = "packages";
+    current.strat_kind = "Packages";
   } else if (data.rules !== undefined) {
     current.strats = data.rules;
-    current.strat_kind = "rules";
+    current.strat_kind = "Rules";
   } else {
     current.strats = [];
     current.strat_kind = "__No strat defined__";
@@ -576,8 +582,7 @@ $("#grs_folder_input").change(function(event) {
       }
     };
     let slash_pos = files[0].webkitRelativePath.indexOf('/');
-    current.grs = files[0].webkitRelativePath.slice(0, slash_pos);
-
+    current.grs = "Folder: " + files[0].webkitRelativePath.slice(0, slash_pos);
   }
   $("#grs_folder_input").val('');
 })
@@ -591,8 +596,7 @@ function load_grs(grs_file) {
     form.append("grs_file", grs_file);
 
     request("load_grs", form, function(data) {
-      // current.grs = "Folder: " + folder;
-      current.strats = data;
+      update_strats(data);
       if (current.level > 2) {
         set_level(2)
       };

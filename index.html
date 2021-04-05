@@ -162,6 +162,9 @@
                     </span>
                   </span>
                 </span>
+                <span style="padding: 10px;">•••</span>
+                Other: <input type="text" v-model="local_strat" :disabled="level<2" />
+                <button type="button" v-if="local_strat.length>0" id="strat-__local__" v-on:click="rewrite_event" :disabled="level<2" class="btn btn-sm btn-secondary">Apply</button>
               </h5>
             </div>
 
