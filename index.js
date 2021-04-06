@@ -184,14 +184,14 @@ $(document).ready(function() {
     }
   });
 
-  $('.modal-content').resizable({
-    alsoResize: ".modal-dialog",
+  $('#code_modal-content').resizable({
+    alsoResize: "#code_modal-dialog",
     minHeight: 300,
     minWidth: 300
   });
 
-  $('.modal-dialog').draggable({
-    handle: ".modal-header"
+  $('#code_modal-dialog').draggable({
+    handle: "#code_modal-header"
   });
 
 });
@@ -202,7 +202,7 @@ function modal_resize() {
     // ugly hack to make editor follow the size on the modal
     // NB: the height of modal-body in correcly updated when increasing but not when decreading!
     // TODO?: replace 170 by a value computed at the beginning
-    $('#grs_display + div').height($('.modal-content').height() - 170);
+    $('#grs_display + div').height($('#code_modal-content').height() - 170);
     current.code_editor.refresh();
   }
 }
