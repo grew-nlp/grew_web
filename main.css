@@ -102,5 +102,13 @@ button {
 }
 
 .alert-warning {
-  margin: 16px;
+  margin:  16px;
+}
+
+.alert-secondary {
+  margin-top: 15px;
+}
+
+h5 {
+  margin-bottom: 0px;
 }
