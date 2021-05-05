@@ -75,7 +75,7 @@ var current = new Vue({
 
       request("upload_grs_code", form, function(data) {
         current.grs = "Locally edited";
-        current.strats = data.strategies;
+        update_strats(data);
         if (current.level > 2) {
           set_level(2)
         };
