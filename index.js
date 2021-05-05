@@ -562,7 +562,11 @@ function select_rule(position) {
 
 // ====================================================================================================
 $("#grs_folder_input").change(function(event) {
-  let files = event.target.files;
+  let all_files = Object.values(event.target.files);
+
+  // Do not take into account hidden files
+  let files = all_files.filter ( file => file["name"][0] != '.');
+
   if (files.length > 100) {
     swal("Cannot upload", "Too much files (more than 100)", "error");
   } else {
