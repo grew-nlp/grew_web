@@ -314,6 +314,9 @@ $('#dep_graph').change(function() {
   request("set_display", form, function(data) {
     if ("init" in data) {
       current.svg_init = data.init;
+      if (current.level == 5) { // special case "No rules applied" --> update final
+        current.svg_final = data.init;
+      }
     }
     if ("final" in data) {
       current.svg_final = data.final;
