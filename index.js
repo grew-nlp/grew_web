@@ -344,16 +344,18 @@ function upload_corpus(file) {
   form.append("session_id", current.session_id);
   form.append("file", file);
 
+  disable_ui();
   request("upload_corpus", form, function(data) {
     current.corpus = file.name;
     current.meta = data;
-    current.sent_ids = Object.keys(data); // rely on the ordering ob object keys (may be fragile)
+    current.sent_ids = Object.keys(data); // rely on the ordering of object keys (may be fragile)
     set_level(1);
     $("#button-corpus").click(); // change pane
     if (current.sent_ids.length == 1) {
       select_graph(current.sent_ids[0]);
       set_level(2);
     }
+    enable_ui();
   })
 }
 
@@ -629,6 +631,19 @@ function upload_file(file) {
     console.log("Uploaded ==> " + file.webkitRelativePath);
     current.count_upload += 1;
   })
+}
+
+// ====================================================================================================
+// see: https://stackoverflow.com/questions/38670610
+function disable_ui() {
+  $("#loading_overlay").dialog({
+    modal: true,
+    closeOnEscape: false,
+    dialogClass: "dialog-no-close",
+  });
+}
+function enable_ui() {
+  $("#loading_overlay").dialog("close");
 }
 
 // ====================================================================================================

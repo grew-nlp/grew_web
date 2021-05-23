@@ -112,3 +112,7 @@ button {
 h5 {
   margin-bottom: 0px;
 }
+
+.dialog-no-close .ui-dialog-titlebar {
+  display: none;
+}
