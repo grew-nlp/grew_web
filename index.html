@@ -102,7 +102,7 @@
 
     <div class="tab-content">
       <!-- *************** pane 1: corpus view *************** -->
-      <div v-if="pane == 1" class="main">
+      <div v-show="pane == 1" class="main">
         <!-- <div id="pill-corpus" class="main tab-pane fade in active show"> -->
 
         <div class="wrapper">
@@ -188,7 +188,7 @@
       </div>
 
       <!-- *************** pane 2: rewriting view *************** -->
-      <div v-if="pane == 2" class="main">
+      <div v-show="pane == 2" class="main">
         <!-- <div id="pill-rewriting" class="main tab-pane fade"> -->
 
         <div class="wrapper">
@@ -252,7 +252,7 @@
       </div>
 
       <!-- *************** pane 3: rules view *************** -->
-      <div v-if="pane == 3" class="main">
+      <div v-show="pane == 3" class="main">
         <!-- <div id="pill-rules" class="main tab-pane fade"> -->
 
         <div class="wrapper">
