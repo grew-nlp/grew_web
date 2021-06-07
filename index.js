@@ -44,6 +44,8 @@ var current = new Vue({
     svg_final: "",
     svg_before: "",
     svg_after: "",
+    
+    warnings: [],
   },
 
   computed: {
@@ -349,8 +351,9 @@ function upload_corpus(file) {
   disable_ui();
   request("upload_corpus", form, function(data) {
     current.corpus = file.name;
-    current.meta = data;
-    current.sent_ids = Object.keys(data); // rely on the ordering of object keys (may be fragile)
+    current.meta = data.meta_list;
+    current.warnings = data.warnings;
+    current.sent_ids = Object.keys(data.meta_list); // rely on the ordering of object keys (may be fragile)
     set_level(1);
     current.pane = 1;
     if (current.sent_ids.length == 1) {
