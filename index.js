@@ -7,6 +7,8 @@ var current = new Vue({
     session_id: "Not connected",
     level: 0,
 
+    pane: 1,
+
     file_input: true, // true --> file    false --> folder
 
     grs: 'No GRS loaded',
@@ -79,7 +81,7 @@ var current = new Vue({
         if (current.level > 2) {
           set_level(2)
         };
-        $("#button-corpus").click(); // change pane
+        current.pane = 1;
       })
     },
 
@@ -93,7 +95,7 @@ var current = new Vue({
         if (strat != current.selected_strat) {
           rewrite(strat);
         } else {
-          $("#button-rewriting").click(); // change pane
+          current.pane=2;
         }
       }
     },
@@ -117,7 +119,7 @@ var current = new Vue({
     // ------------------------------------------------------------
     get_rules_event(event) {
       if (current.level > 6) {
-        $("#button-rules").click();
+        current.pane = 3;
       } else {
         get_rules()
       }
@@ -350,7 +352,7 @@ function upload_corpus(file) {
     current.meta = data;
     current.sent_ids = Object.keys(data); // rely on the ordering of object keys (may be fragile)
     set_level(1);
-    $("#button-corpus").click(); // change pane
+    current.pane = 1;
     if (current.sent_ids.length == 1) {
       select_graph(current.sent_ids[0]);
       set_level(2);
@@ -389,7 +391,7 @@ function url_grs(url) {
     if (current.level > 2) {
       set_level(2)
     };
-    $("#button-corpus").click(); // change pane
+    current.pane = 1;
   })
 }
 
@@ -404,7 +406,7 @@ function url_corpus(url) {
     current.meta = data;
     current.sent_ids = Object.keys(data); // rely on the ordering of object keys (may be fragile)
     set_level(1);
-    $("#button-corpus").click(); // change pane
+    current.pane = 1;
     if (current.sent_ids.length == 1) {
       select_graph(current.sent_ids[0]);
       set_level(2);
@@ -435,7 +437,7 @@ function upload_grs(file) {
     if (current.level > 2) {
       set_level(2)
     };
-    $("#button-corpus").click(); // change pane
+    current.pane = 1;
 
     // read data for current.code_editor (see https://stackoverflow.com/questions/3582671)
     var reader = new FileReader();
@@ -486,7 +488,7 @@ function rewrite(strat) {
       set_level(3);
     } else {
       current.normal_forms = data
-      $("#button-rewriting").click(); // change pane
+      current.pane=2;
       // if there is exactly one normal_form, select it
       if (data.length == 1) {
         select_normal_form(0);
@@ -529,7 +531,7 @@ function get_rules() {
 
   request("rules", form, function(data) {
     current.rules = data;
-    $("#button-rules").click();
+    current.pane = 3;
     if (data.length == 1) {
       select_rule(0);
     }
@@ -609,7 +611,7 @@ function load_grs(grs_file) {
       if (current.level > 2) {
         set_level(2)
       };
-      $("#button-corpus").click(); // change pane
+      current.pane = 1;
       current.selected_grs_file = grs_file;
     })
   } else {

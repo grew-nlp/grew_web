@@ -33,19 +33,6 @@
     <nav class="navbar navbar-expand-sm fixed-top">
       <img aria-hidden="true" role="presentation" src="img/grew.svg" id="logo">
 
-      <ul class="nav nav-pills">
-
-        <li class="active">
-          <button id="button-corpus" class="nav-link btn btn-sm active" data-toggle="pill" href="#pill-corpus">Corpus</button>
-        </li>
-        <li>
-          <button id="button-rewriting" :disabled="level<4" class="nav-link btn btn-sm" data-toggle="pill" href="#pill-rewriting">Rewriting</button>
-        </li>
-        <li>
-          <button id="button-rules" :disabled="level<7" class="nav-link btn btn-sm" data-toggle="pill" href="#pill-rules">Rules</button>
-        </li>
-      </ul>
-
       <ul class="navbar-nav">
         <li>
           <h3>Corpus:</h3>
@@ -115,11 +102,19 @@
 
     <div class="tab-content">
       <!-- *************** pane 1: corpus view *************** -->
-      <div id="pill-corpus" class="main tab-pane fade in active show">
+      <div v-if="pane == 1" class="main">
+        <!-- <div id="pill-corpus" class="main tab-pane fade in active show"> -->
 
         <div class="wrapper">
           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             <div class="sidebar-sticky pt-3">
+
+              <div class="btn-group" role="group" style="width: 100%">
+                <button type="button" class="btn btn-sm btn-success">Corpus</button>
+                <button type="button" class="btn btn-sm btn-secondary" :disabled="level<4" v-on:click="pane=2">Rewriting</button>
+                <button type="button" class="btn btn-sm btn-secondary" :disabled="level<7" v-on:click="pane=3">Rules</button>
+              </div>
+
               <h3>{{sent_ids.length}} graph{{ sent_ids.length > 1 ? "s" : "" }}</h3>
               <div v-if="sent_ids.length>1">
                 Filter:
@@ -187,11 +182,19 @@
       </div>
 
       <!-- *************** pane 2: rewriting view *************** -->
-      <div id="pill-rewriting" class="main tab-pane fade">
+      <div v-if="pane == 2" class="main">
+        <!-- <div id="pill-rewriting" class="main tab-pane fade"> -->
 
         <div class="wrapper">
           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             <div class="sidebar-sticky pt-3">
+
+              <div class="btn-group" role="group" style="width: 100%">
+                <button type="button" class="btn btn-sm btn-secondary" v-on:click="pane=1">Corpus</button>
+                <button type="button" class="btn btn-sm btn-success">Rewriting</button>
+                <button type="button" class="btn btn-sm btn-secondary" :disabled="level<7" v-on:click="pane=3">Rules</button>
+              </div>
+
               <ul class="nav flex-column">
                 <li>
                   <h3>{{normal_forms.length}} Normal form{{ normal_forms.length > 1 ? "s" : "" }}</h3>
@@ -243,11 +246,19 @@
       </div>
 
       <!-- *************** pane 3: rules view *************** -->
-      <div id="pill-rules" class="main tab-pane fade">
+      <div v-if="pane == 3" class="main">
+        <!-- <div id="pill-rules" class="main tab-pane fade"> -->
 
         <div class="wrapper">
           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             <div class="sidebar-sticky pt-3">
+
+              <div class="btn-group" role="group" style="width: 100%">
+                <button type="button" class="btn btn-sm btn-secondary" v-on:click="pane=1">Corpus</button>
+                <button type="button" class="btn btn-sm btn-secondary" v-on:click="pane=2">Rewriting</button>
+                <button type="button" class="btn btn-sm btn-success">Rules</button>
+              </div>
+
               <ul class="nav flex-column">
                 <li>
                   <h3>{{rules.length}} rule{{ rules.length > 1 ? "s" : "" }}</h3>
