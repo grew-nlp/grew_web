@@ -238,7 +238,9 @@ function request(service, form, data_fct) {
     .done(function(response) {
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
-        swal(service, resp.message, "error");
+        swal (service, JSON.stringify (resp.message), "error" )
+      } else if (resp.status === "BUG") {
+        swal (service, "BUG, please report\n" + JSON.stringify (resp.message), "error" )
       } else {
         console.log("Success request to service: " + service + "-->" + resp.data);
         data_fct(resp.data);
