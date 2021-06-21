@@ -35,7 +35,7 @@ var current = new Vue({
 
     normal_forms: [],
     selected_normal_form: -1, // the index of the currently selected normal_form
-
+    log_rewrite: { "rules": 0, "time": 0 },
     rules: [],
     selected_rule: -1, // the index of the currently selected rule
     nb_rules: 0,
@@ -188,9 +188,9 @@ $(document).ready(function() {
       }
       current.code_editor.setValue(current.grs_data);
       current.code_editor.on("change", function() {
-        current.edited=true;
+        current.edited = true;
       });
-      current.edited=false;
+      current.edited = false;
     }
   });
 
@@ -455,7 +455,7 @@ function upload_grs(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
       update_code_editor(e.target.result);
-      current.edited=false;
+      current.edited = false;
     };
     reader.readAsText(file);
 
@@ -498,14 +498,14 @@ function rewrite(strat) {
   request("rewrite", form, function(data) {
     current.selected_strat = strat;
     current.normal_forms = [];
-    if (data.length == 0) {
+    if (data.normal_forms.length == 0) {
       set_level(3);
     } else {
       current.normal_forms = data.normal_forms;
-      console.log(data.log);
+      current.log_rewrite = data.log;
       current.pane = 2;
       // if there is exactly one normal_form, select it
-      if (data.length == 1) {
+      if (data.normal_forms.length == 1) {
         select_normal_form(0);
       }
     }

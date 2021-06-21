@@ -221,6 +221,10 @@
                 <span v-if="grs_files.length>0"><b>grs file:</b> {{ selected_grs_file }}</span>
                 <span v-if="grs_files.length>0" style="padding: 10px;">•••</span>
                 <span><b>Strategy:</b> {{ selected_strat }}</span>
+                <span>•••</span>
+                <span>Total numbers of rules applied: {{ log_rewrite.rules }}</span>
+                <span>•••</span>
+                <span>Time: {{ log_rewrite.time.toFixed(3) }} s</span>
               </h5>
             </div>
             <h3 v-for="(obj,key) in selected_meta">
