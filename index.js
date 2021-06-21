@@ -25,6 +25,7 @@ var current = new Vue({
     selected_strat: "",
     local_strat: "",
     code_editor: undefined,
+    edited: false,
 
     corpus: 'No corpus loaded',
     meta: {},
@@ -44,7 +45,7 @@ var current = new Vue({
     svg_final: "",
     svg_before: "",
     svg_after: "",
-    
+
     warnings: [],
   },
 
@@ -84,6 +85,7 @@ var current = new Vue({
           set_level(2)
         };
         current.pane = 1;
+        current.edited = false;
       })
     },
 
@@ -97,7 +99,7 @@ var current = new Vue({
         if (strat != current.selected_strat) {
           rewrite(strat);
         } else {
-          current.pane=2;
+          current.pane = 2;
         }
       }
     },
@@ -185,6 +187,10 @@ $(document).ready(function() {
         });
       }
       current.code_editor.setValue(current.grs_data);
+      current.code_editor.on("change", function() {
+        current.edited=true;
+      });
+      current.edited=false;
     }
   });
 
@@ -238,9 +244,9 @@ function request(service, form, data_fct) {
     .done(function(response) {
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
-        swal (service, JSON.stringify (resp.message), "error" )
+        swal(service, JSON.stringify(resp.message), "error")
       } else if (resp.status === "BUG") {
-        swal (service, "BUG, please report\n" + JSON.stringify (resp.message), "error" )
+        swal(service, "BUG, please report\n" + JSON.stringify(resp.message), "error")
       } else {
         console.log("Success request to service: " + service + "-->" + resp.data);
         data_fct(resp.data);
@@ -397,6 +403,7 @@ function url_grs(url) {
       set_level(2)
     };
     current.pane = 1;
+    current.editer = false;
   })
 }
 
@@ -441,15 +448,17 @@ function upload_grs(file) {
     update_strats(data);
     if (current.level > 2) {
       set_level(2)
+      current.edited = false;
     };
     current.pane = 1;
-
     // read data for current.code_editor (see https://stackoverflow.com/questions/3582671)
     var reader = new FileReader();
     reader.onload = function(e) {
-      update_code_editor(e.target.result)
+      update_code_editor(e.target.result);
+      current.edited=false;
     };
     reader.readAsText(file);
+
   })
 }
 
@@ -492,8 +501,9 @@ function rewrite(strat) {
     if (data.length == 0) {
       set_level(3);
     } else {
-      current.normal_forms = data
-      current.pane=2;
+      current.normal_forms = data.normal_forms;
+      console.log(data.log);
+      current.pane = 2;
       // if there is exactly one normal_form, select it
       if (data.length == 1) {
         select_normal_form(0);
@@ -577,7 +587,7 @@ $("#grs_folder_input").change(function(event) {
   let all_files = Object.values(event.target.files);
 
   // Do not take into account hidden files
-  let files = all_files.filter ( file => file["name"][0] != '.');
+  let files = all_files.filter(file => file["name"][0] != '.');
 
   if (files.length > 100) {
     swal("Cannot upload", "Too much files (more than 100)", "error");
@@ -649,6 +659,7 @@ function disable_ui() {
     dialogClass: "dialog-no-close",
   });
 }
+
 function enable_ui() {
   $("#loading_overlay").dialog("close");
 }
