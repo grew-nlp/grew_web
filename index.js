@@ -288,10 +288,10 @@ function set_level(level) {
   if (level < 2) {
     $('#pill-corpus .nav-item').removeClass('selected');
     current.svg_init = "";
+    current.selected_sent_id = "";
   }
   if (level <= 2) {
     current.selected_strat = "";
-    current.selected_sent_id = "";
   }
   if (level < 5) {
     current.selected_normal_form = -1;
