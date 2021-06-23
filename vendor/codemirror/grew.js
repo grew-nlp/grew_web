@@ -11,7 +11,7 @@
 })(function(CodeMirror) {
   "use strict";
 
-  CodeMirror.defineMode('mllike', function(_config, parserConfig) {
+  CodeMirror.defineMode('grew', function(_config, parserConfig) {
     var words = {
       'global': 'builtin',
       'pattern': 'builtin',
@@ -27,6 +27,14 @@
       'Pick': 'special',
       'Try': 'special',
       'If': 'special',
+      'del_feat': 'command',
+      'del_edge': 'command',
+      'add_edge': 'command',
+      'add_node': 'command',
+      'del_node': 'command',
+      'shift': 'command',
+      'shift_in': 'command',
+      'shift_out': 'command',
     };
 
     function tokenBase(stream, state) {

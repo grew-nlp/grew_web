@@ -121,3 +121,6 @@ h5 {
 .modal-open {
   overflow: auto;
 }
+
+
+.cm-s-neat span.cm-command { line-height: 1em; font-weight: bold; color: #c05; }
