@@ -116,3 +116,8 @@ h5 {
 .dialog-no-close .ui-dialog-titlebar {
   display: none;
 }
+
+/* Enable scrolling when the modal editor is open */
+.modal-open {
+  overflow: auto;
+}
