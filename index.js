@@ -35,7 +35,10 @@ var current = new Vue({
 
     normal_forms: [],
     selected_normal_form: -1, // the index of the currently selected normal_form
-    log_rewrite: { "rules": 0, "time": 0 },
+    log_rewrite: {
+      "rules": 0,
+      "time": 0
+    },
     rules: [],
     selected_rule: -1, // the index of the currently selected rule
     nb_rules: 0,
@@ -119,6 +122,16 @@ var current = new Vue({
       if (position != current.selected_normal_form) {
         select_normal_form(position);
       }
+    },
+
+    // ------------------------------------------------------------
+    save_json(event) {
+      var form = new FormData();
+      form.append("session_id", current.session_id);
+      
+      request("json_normal_form", form, function(data) {
+        window.open(data, '_blank');
+      })
     },
 
     // ------------------------------------------------------------

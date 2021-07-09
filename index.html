@@ -222,7 +222,7 @@
                 <span v-if="grs_files.length>0" style="padding: 10px;">•••</span>
                 <span><b>Strategy:</b> {{ selected_strat }}</span>
                 <span>•••</span>
-                <span>Total numbers of rules applied: {{ log_rewrite.rules }}</span>
+                <span>Total number of rules applied: {{ log_rewrite.rules }}</span>
                 <span>•••</span>
                 <span>Time: {{ log_rewrite.time.toFixed(3) }} s</span>
               </h5>
@@ -251,6 +251,7 @@
             <div v-show="svg_final != ''" id="svg_final" class="display-svg">
               <img v-bind:src="svg_final"> </img>
             </div>
+            <button type="button" class="btn btn-sm btn-secondary" v-on:click="save_json"><img src="img/download.svg"></img> JSON</button>
           </div>
         </div>
 
