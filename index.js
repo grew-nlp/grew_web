@@ -50,6 +50,7 @@ var current = new Vue({
     svg_after: "",
 
     warnings: [],
+    skip_beforeunload: false,
   },
 
   computed: {
@@ -128,10 +129,22 @@ var current = new Vue({
     save_json(event) {
       var form = new FormData();
       form.append("session_id", current.session_id);
-      
+
       request("json_normal_form", form, function(data) {
-        window.open(data, '_blank');
+        current.skip_beforeunload = true;
+        var element = document.createElement('a');
+        element.setAttribute('href', data);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+
+        // The click event is executed asynchronously, add some delay to ensure proper "skipping" of beforeunload
+        setTimeout(() => {
+          current.skip_beforeunload = false;
+        }, 500);
       })
+
     },
 
     // ------------------------------------------------------------
@@ -171,15 +184,12 @@ $(document).ready(function() {
   init();
   connect();
 
-  $(window).on('beforeunload', function() {
-    if (current.level == 0) {
-      return true;
-    } else {
-      var c = confirm();
-      if (c) {
-        return true;
-      } else
-        return false;
+  window.addEventListener('beforeunload', function(e) {
+    if (current.level > 0 && !current.skip_beforeunload) {
+      // Cancel the event
+      e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+      // Chrome requires returnValue to be set
+      e.returnValue = '';
     }
   });
 
