@@ -104,7 +104,9 @@ var current = new Vue({
         if (strat != current.selected_strat) {
           rewrite(strat);
         } else {
-          current.pane = 2;
+          if (current.level > 3) {
+            current.pane = 2;
+          }
         }
       }
     },
@@ -513,7 +515,8 @@ function select_graph(sent_id) {
 // ====================================================================================================
 function rewrite(strat) {
   console.log("[rewrite] " + strat);
-  set_level(4);
+  current.selected_strat = "";
+  set_level(2); // ensure level 2 in case of error in the "rewrite" request
 
   var form = new FormData();
   form.append("session_id", current.session_id);
@@ -525,6 +528,7 @@ function rewrite(strat) {
     if (data.normal_forms.length == 0) {
       set_level(3);
     } else {
+      set_level(4);
       current.normal_forms = data.normal_forms;
       current.log_rewrite = data.log;
       current.pane = 2;
