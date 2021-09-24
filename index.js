@@ -183,6 +183,11 @@ function clear_filter() {
 
 // ====================================================================================================
 $(document).ready(function() {
+
+  
+  $('[data-toggle="tooltip"]').tooltip()
+
+
   init();
   connect();
 
