@@ -260,7 +260,8 @@
             <div v-show="svg_final != ''" id="svg_final" class="display-svg">
               <img v-bind:src="svg_final"> </img>
             </div>
-            <button type="button" class="btn btn-sm btn-secondary" v-on:click="save_json"><img src="img/download.svg"></img> JSON</button>
+            <button v-if="level >= 6" type="button" class="btn btn-sm btn-secondary" v-on:click="save_json"><img src="img/download.svg"></img> JSON</button>
+            <button v-if="level >= 6" type="button" class="btn btn-sm btn-secondary" v-on:click="save_conll"><img src="img/download.svg"></img> CoNLL</button>
           </div>
         </div>
 

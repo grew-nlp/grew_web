@@ -128,25 +128,13 @@ var current = new Vue({
     },
 
     // ------------------------------------------------------------
-    save_json(event) {
-      var form = new FormData();
-      form.append("session_id", current.session_id);
+    save_json() {
+      save_normal_form("json");
+    },
 
-      request("json_normal_form", form, function(data) {
-        current.skip_beforeunload = true;
-        var element = document.createElement('a');
-        element.setAttribute('href', data);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-
-        // The click event is executed asynchronously, add some delay to ensure proper "skipping" of beforeunload
-        setTimeout(() => {
-          current.skip_beforeunload = false;
-        }, 500);
-      })
-
+    // ------------------------------------------------------------
+    save_conll() {
+      save_normal_form("conll");
     },
 
     // ------------------------------------------------------------
@@ -184,7 +172,7 @@ function clear_filter() {
 // ====================================================================================================
 $(document).ready(function() {
 
-  
+
   $('[data-toggle="tooltip"]').tooltip()
 
 
@@ -680,6 +668,28 @@ function upload_file(file) {
   request("upload_file", form, function(data) {
     console.log("Uploaded ==> " + file.webkitRelativePath);
     current.count_upload += 1;
+  })
+}
+
+// ====================================================================================================
+function save_normal_form(format) {
+  var form = new FormData();
+  form.append("session_id", current.session_id);
+  form.append("format", format);
+
+  request("save_normal_form", form, function(data) {
+    current.skip_beforeunload = true;
+    var element = document.createElement('a');
+    element.setAttribute('href', data);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+
+    // The click event is executed asynchronously, add some delay to ensure proper "skipping" of beforeunload
+    setTimeout(() => {
+      current.skip_beforeunload = false;
+    }, 500);
   })
 }
 
