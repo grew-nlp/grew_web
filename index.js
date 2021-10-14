@@ -7,6 +7,8 @@ var current = new Vue({
     session_id: "Not connected",
     level: 0,
 
+    processing: false,
+
     pane: 1,
 
     file_input: true, // true --> file    false --> folder
@@ -263,17 +265,19 @@ function request(service, form, data_fct) {
     .done(function(response) {
       resp = JSON.parse(response);
       if (resp.status === "ERROR") {
-        swal(service, JSON.stringify(resp.message), "error")
+        swal(service, JSON.stringify(resp.message), "error");
       } else if (resp.status === "BUG") {
         swal(service, "BUG, please report\n" + JSON.stringify(resp.message), "error")
       } else {
         console.log("Success request to service: " + service + "-->" + resp.data);
         data_fct(resp.data);
       }
+      enable_ui();
     })
     .fail(function() {
       if (service != "connect") {
         swal("Connection fail", "The grew_back service `" + service + "` is not available.", "error");
+        enable_ui();
       } else {
         window.location.replace("./maintenance.html");
       }
@@ -387,7 +391,6 @@ function upload_corpus(file) {
       select_graph(current.sent_ids[0]);
       set_level(2);
     }
-    enable_ui();
   })
 }
 
@@ -696,6 +699,7 @@ function save_normal_form(format) {
 // ====================================================================================================
 // see: https://stackoverflow.com/questions/38670610
 function disable_ui() {
+  current.processing = true;
   $("#loading_overlay").dialog({
     modal: true,
     closeOnEscape: false,
@@ -704,7 +708,10 @@ function disable_ui() {
 }
 
 function enable_ui() {
-  $("#loading_overlay").dialog("close");
+  if (current.processing) {
+    $("#loading_overlay").dialog("close");
+    current.processing = false;
+  }
 }
 
 // ====================================================================================================
