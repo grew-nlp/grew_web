@@ -1,4 +1,5 @@
 Vue.config.devtools = true
+searchParams = undefined
 
 var current = new Vue({
   el: '#app',
@@ -174,6 +175,7 @@ function clear_filter() {
 // ====================================================================================================
 $(document).ready(function() {
 
+  searchParams = new URLSearchParams(window.location.search)
 
   $('[data-toggle="tooltip"]').tooltip()
 
@@ -286,21 +288,37 @@ function request(service, form, data_fct) {
 
 // ====================================================================================================
 function connect() {
-  var form = new FormData();
-  request("connect", form, function(data) {
-    current.session_id = data;
-    parameters(); // make sure that parameters are handled after connection with the server
-  })
-}
-
-// ====================================================================================================
-function parameters() {
-  let searchParams = new URLSearchParams(window.location.search)
-  if (searchParams.has('grs')) {
-    url_grs(searchParams.get('grs'));
-  }
-  if (searchParams.has('corpus')) {
-    url_corpus(searchParams.get('corpus'));
+  if (searchParams.has('session_id')) {
+    current.session_id = searchParams.get('session_id');
+    if (searchParams.has('grs')) {
+      url_grs(searchParams.get('grs'));
+    }
+    // alert (current.session_id)
+    var form = new FormData();
+    form.append("session_id", current.session_id);
+    request("get_corpus", form, function(data) {
+      current.corpus = "direct";
+      current.meta = data.meta_list;
+      current.warnings = data.warnings;
+      current.sent_ids = Object.keys(data.meta_list); // rely on the ordering of object keys (may be fragile)
+      set_level(1);
+      current.pane = 1;
+      if (current.sent_ids.length == 1) {
+        select_graph(current.sent_ids[0]);
+        set_level(2);
+      }  
+    })  
+  } else {
+    var form = new FormData();
+    request("connect", form, function(data) {
+      current.session_id = data;
+      if (searchParams.has('grs')) {
+        url_grs(searchParams.get('grs'));
+      }
+      if (searchParams.has('corpus')) {
+        url_corpus(searchParams.get('corpus'));
+      }
+    })  
   }
 }
 
@@ -495,12 +513,12 @@ function update_code_editor(code) {
 
 // ====================================================================================================
 function select_graph(sent_id) {
-  console.log("[select_graph] " + sent_id);
+  console.log("[select_graph] >>>" + sent_id + "<<<");
   set_level(2);
 
   var form = new FormData();
   form.append("session_id", current.session_id);
-  form.append("sent_id", sent_id);
+  form.append("sent_id", sent_id.trim());
 
   request("select_graph", form, function(data) {
     current.selected_sent_id = sent_id;
