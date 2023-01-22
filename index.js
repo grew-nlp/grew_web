@@ -288,7 +288,7 @@ function request(service, form, data_fct) {
 
 // ====================================================================================================
 function connect() {
-  if (searchParams.has('session_id')) {
+  if (searchParams.has('session_id')) { // connection with session_id build by a previous service
     current.session_id = searchParams.get('session_id');
     if (searchParams.has('grs')) {
       url_grs(searchParams.get('grs'));
@@ -296,6 +296,11 @@ function connect() {
     // alert (current.session_id)
     var form = new FormData();
     form.append("session_id", current.session_id);
+    request("get_grs", form, function (data) {
+      if (data != null) {
+        update_strats(data);
+      }
+    })
     request("get_corpus", form, function(data) {
       current.corpus = "direct";
       current.meta = data.meta_list;
@@ -306,9 +311,9 @@ function connect() {
       if (current.sent_ids.length == 1) {
         select_graph(current.sent_ids[0]);
         set_level(2);
-      }  
-    })  
-  } else {
+      }
+    })
+  } else { // new connection without session_id
     var form = new FormData();
     request("connect", form, function(data) {
       current.session_id = data;
@@ -318,7 +323,7 @@ function connect() {
       if (searchParams.has('corpus')) {
         url_corpus(searchParams.get('corpus'));
       }
-    })  
+    }) 
   }
 }
 
