@@ -4,7 +4,7 @@ searchParams = undefined
 var current = new Vue({
   el: '#app',
   data: {
-    grew_back_url: "http://back.grew.fr/",
+    grew_back_url: "https://gwb.grew.fr/",
     session_id: "Not connected",
     level: 0,
 
