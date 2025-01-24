@@ -4,7 +4,7 @@ searchParams = undefined
 var current = new Vue({
   el: '#app',
   data: {
-    grew_back_url: "https://gwb.grew.fr/",
+    grew_back_url: "http://localhost:4758/",
     session_id: "Not connected",
     level: 0,
 
@@ -172,6 +172,29 @@ function clear_filter() {
   current.search = "";
 }
 
+// ==================================================================================
+async function generic(backend, service, data) {
+  try {
+    const response = await fetch(backend+service, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    const result = await response.json()
+    if (result.status === "ERROR") {
+      alert (JSON.stringify (result.message))
+      return null
+    } else {
+      return (result.data)
+    }
+  } catch (error) {
+    const msg = `Service \`${service}\` unavailable.\n\n${error.message}`
+    alert (msg, "Network error")
+  }
+}
+
 // ====================================================================================================
 $(document).ready(function() {
 
@@ -179,6 +202,7 @@ $(document).ready(function() {
 
   $('[data-toggle="tooltip"]').tooltip()
 
+  console.log (current.grew_back_url)
 
   init();
   connect();
@@ -277,17 +301,35 @@ function request(service, form, data_fct) {
       enable_ui();
     })
     .fail(function() {
-      if (service != "connect") {
+      // if (service != "connect") {
         swal("Connection fail", "The grew_back service `" + service + "` is not available.", "error");
         enable_ui();
-      } else {
-        window.location.replace("./maintenance.html");
-      }
+      // } else {
+      //   window.location.replace("./maintenance.html");
+      // }
     });
 }
 
-// ====================================================================================================
+
+
+// ==================================================================================
 function connect() {
+  let param = {
+  }
+
+  generic(current.grew_back_url, "connect", param)
+  .then(function (data) {
+    current.session_id = data;
+    // TODO: get code from OLD _connect
+  })
+}
+
+
+
+
+
+// ====================================================================================================
+function _connect() {
   if (searchParams.has('session_id')) { // connection with session_id build by a previous service
     current.session_id = searchParams.get('session_id');
     if (searchParams.has('grs')) {
@@ -517,7 +559,7 @@ function update_code_editor(code) {
 }
 
 // ====================================================================================================
-function select_graph(sent_id) {
+function _select_graph(sent_id) {
   console.log("[select_graph] >>>" + sent_id + "<<<");
   set_level(2);
 
@@ -532,16 +574,34 @@ function select_graph(sent_id) {
 }
 
 // ====================================================================================================
+function select_graph(sent_id) {
+  console.log("[select_graph] >>>" + sent_id + "<<<");
+  set_level(2);
+
+  let param = {
+    "session_id": current.session_id,
+    "sent_id": sent_id.trim()
+  }
+  generic(current.grew_back_url, "select_graph", param)
+  .then(function (data) {
+    current.selected_sent_id = sent_id;
+    current.svg_init = data;
+  })
+}
+
+// ====================================================================================================
 function rewrite(strat) {
   console.log("[rewrite] " + strat);
   current.selected_strat = "";
   set_level(2); // ensure level 2 in case of error in the "rewrite" request
 
-  var form = new FormData();
-  form.append("session_id", current.session_id);
-  form.append("strat", strat);
+  let param = {
+    "session_id": current.session_id,
+    "strat": strat
+  }
 
-  request("rewrite", form, function(data) {
+  generic(current.grew_back_url, "rewrite", param)
+  .then(function (data) {
     current.selected_strat = strat;
     current.normal_forms = [];
     if (data.normal_forms.length == 0) {
@@ -572,12 +632,14 @@ function select_normal_form(position) {
   } else {
     set_level(6);
 
-    var form = new FormData();
-    form.append("session_id", current.session_id);
-    form.append("position", position);
-
-    request("select_normal_form", form, function(data) {
-      current.svg_final = data;
+    let param = {
+      "session_id": current.session_id,
+      "position": position
+    }
+  
+    generic(current.grew_back_url, "select_normal_form", param)
+    .then(function (data) {
+        current.svg_final = data;
     })
   }
 }
