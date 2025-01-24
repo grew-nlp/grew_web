@@ -81,12 +81,14 @@ var current = new Vue({
   methods: {
     // ------------------------------------------------------------
     upload_grs_from_editor() {
-      var form = new FormData();
-      form.append("session_id", current.session_id);
-      form.append("code", current.code_editor.getValue());
+      let param = {
+        "session_id": current.session_id,
+        "code": current.code_editor.getValue()
+      }
 
-      request("upload_grs_code", form, function(data) {
-        current.grs = "Locally edited";
+      generic(current.grew_back_url, "upload_grs_code", param)
+      .then(function (data) {
+            current.grs = "Locally edited";
         current.grs_data = current.code_editor.getValue();
         update_strats(data);
         if (current.level > 2) {
@@ -313,7 +315,7 @@ function request(service, form, data_fct) {
 
 
 // ==================================================================================
-function connect() {
+function _connect() {
   let param = {
   }
 
@@ -329,21 +331,23 @@ function connect() {
 
 
 // ====================================================================================================
-function _connect() {
+function connect() {
   if (searchParams.has('session_id')) { // connection with session_id build by a previous service
     current.session_id = searchParams.get('session_id');
     if (searchParams.has('grs')) {
       url_grs(searchParams.get('grs'));
     }
-    // alert (current.session_id)
-    var form = new FormData();
-    form.append("session_id", current.session_id);
-    request("get_grs", form, function (data) {
-      if (data != null) {
+    let param = {
+      "session_id": current.session_id,
+    }
+    generic(current.grew_back_url, "get_grs", param)
+    .then(function (data) {
+        if (data != null) {
         update_strats(data);
       }
     })
-    request("get_corpus", form, function(data) {
+    generic(current.grew_back_url, "get_corpus", param)
+    .then(function (data) {
       current.corpus = "direct";
       current.meta = data.meta_list;
       current.warnings = data.warnings;
@@ -356,8 +360,8 @@ function _connect() {
       }
     })
   } else { // new connection without session_id
-    var form = new FormData();
-    request("connect", form, function(data) {
+    generic(current.grew_back_url, "connect", {})
+    .then(function (data) {
       current.session_id = data;
       if (searchParams.has('grs')) {
         url_grs(searchParams.get('grs'));
@@ -365,7 +369,7 @@ function _connect() {
       if (searchParams.has('corpus')) {
         url_corpus(searchParams.get('corpus'));
       }
-    }) 
+    })
   }
 }
 
@@ -403,15 +407,14 @@ $('#file_folder').change(function() {
 
 // ====================================================================================================
 $('#dep_graph').change(function() {
-  var form = new FormData();
-  form.append("session_id", current.session_id);
-  if ($(this).prop('checked')) {
-    form.append("display", "dep");
-  } else {
-    form.append("display", "graph");
+
+  let param = {
+    "session_id": current.session_id,
+    "display": ($(this).prop('checked')) ? "dep" : "graph"
   }
 
-  request("set_display", form, function(data) {
+  generic(current.grew_back_url, "set_display", param)
+  .then(function (data) {
     if ("init" in data) {
       current.svg_init = data.init;
       if (current.level == 5) { // special case "No rules applied" --> update final
@@ -478,11 +481,14 @@ function update_strats(data) {
 
 // ====================================================================================================
 function url_grs(url) {
-  var form = new FormData();
-  form.append("session_id", current.session_id);
-  form.append("url", url);
 
-  request("url_grs", form, function(data) {
+  let param = {
+    "session_id": current.session_id,
+    "url": url
+  }
+
+  generic(current.grew_back_url, "url_grs", param)
+  .then(function (data) {
     current.grs = "From URL";
     update_strats(data);
     update_code_editor(data.code);
@@ -496,11 +502,14 @@ function url_grs(url) {
 
 // ====================================================================================================
 function url_corpus(url) {
-  var form = new FormData();
-  form.append("session_id", current.session_id);
-  form.append("url", url);
+ 
+  let param = {
+    "session_id": current.session_id,
+    "url": url
+  }
 
-  request("url_corpus", form, function(data) {
+  generic(current.grew_back_url, "url_corpus", param)
+  .then(function (data) {
     current.corpus = "From URL";
     current.meta = data;
     current.sent_ids = Object.keys(data); // rely on the ordering of object keys (may be fragile)
@@ -650,11 +659,14 @@ function select_normal_form(position) {
 // ====================================================================================================
 function get_rules() {
   set_level(7);
-  var form = new FormData();
-  form.append("session_id", current.session_id);
 
-  request("rules", form, function(data) {
-    current.rules = data;
+  let param = {
+    "session_id": current.session_id
+  }
+
+  generic(current.grew_back_url, "rules", param)
+  .then(function (data) {
+  current.rules = data;
     current.pane = 3;
     if (data.length == 1) {
       select_rule(0);
@@ -681,11 +693,13 @@ function select_rule(position) {
     });
   }
 
-  var form = new FormData();
-  form.append("session_id", current.session_id);
-  form.append("position", position);
+  let param = {
+    "session_id": current.session_id,
+    "position": position
+  }
 
-  request("select_rule", form, function(data) {
+  generic(current.grew_back_url, "select_rule", param)
+  .then(function (data) {
     current.svg_before = data.before;
     current.svg_after = data.after;
   })
@@ -761,11 +775,14 @@ function upload_file(file) {
 
 // ====================================================================================================
 function save_normal_form(format) {
-  var form = new FormData();
-  form.append("session_id", current.session_id);
-  form.append("format", format);
 
-  request("save_normal_form", form, function(data) {
+  let param = {
+    "session_id": current.session_id,
+    "format": format
+  }
+
+  generic(current.grew_back_url, "save_normal_form", param)
+  .then(function (data) {
     current.skip_beforeunload = true;
     var element = document.createElement('a');
     element.setAttribute('href', data);
