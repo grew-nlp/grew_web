@@ -740,12 +740,14 @@ $("#grs_folder_input").change(function(event) {
 function load_grs(grs_file) {
   // we have to wait until all files are uploaded
   if (current.count_upload == current.nb_files) {
-    var form = new FormData();
-    form.append("session_id", current.session_id);
-    form.append("grs_file", grs_file);
+    let param = {
+      "session_id": current.session_id,
+      "grs_file": grs_file
+    }
 
-    request("load_grs", form, function(data) {
-      update_strats(data);
+    generic(current.grew_back_url, "load_grs", param)
+    .then(function (data) {
+    update_strats(data);
       if (current.level > 2) {
         set_level(2)
       };
