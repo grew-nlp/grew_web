@@ -54,6 +54,10 @@ var current = new Vue({
 
     warnings: [],
     skip_beforeunload: false,
+
+    modal_text: "",
+    modal_title: "JSON",
+    modal_url: "",
   },
 
   computed: {
@@ -133,16 +137,6 @@ var current = new Vue({
     },
 
     // ------------------------------------------------------------
-    save_json() {
-      save_normal_form("json");
-    },
-
-    // ------------------------------------------------------------
-    save_conll() {
-      save_normal_form("conll");
-    },
-
-    // ------------------------------------------------------------
     get_rules_event(event) {
       if (current.level > 6) {
         current.pane = 3;
@@ -165,8 +159,16 @@ var current = new Vue({
       if (grs_file != current.selected_grs_file) {
         load_grs(grs_file);
       }
-    }
+    },
 
+    openModal(format) {
+      get_normal_form(format);
+      current.modal_title = format
+      $('#modal_nf_code').modal('show');
+    },
+    closeModal() {
+      $('#modal_nf_code').modal('hide');
+    }
   }
 })
 
@@ -213,8 +215,6 @@ $(document).ready(function() {
     if (current.level > 0 && !current.skip_beforeunload) {
       // Cancel the event
       e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-      // Chrome requires returnValue to be set
-      e.returnValue = '';
     }
   });
 
@@ -775,8 +775,9 @@ function upload_file(file) {
   })
 }
 
+
 // ====================================================================================================
-function save_normal_form(format) {
+function get_normal_form(format) {
 
   let param = {
     "session_id": current.session_id,
@@ -784,19 +785,21 @@ function save_normal_form(format) {
   }
 
   generic(current.grew_back_url, "save_normal_form", param)
-  .then(function (data) {
-    current.skip_beforeunload = true;
-    var element = document.createElement('a');
-    element.setAttribute('href', data);
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-
-    // The click event is executed asynchronously, add some delay to ensure proper "skipping" of beforeunload
-    setTimeout(() => {
-      current.skip_beforeunload = false;
-    }, 500);
+  .then(function (url) {
+    fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(text => {
+      current.modal_url = url;
+      current.modal_text = text;
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+    });
   })
 }
 
