@@ -643,7 +643,7 @@ function select_normal_form(position) {
 
     let param = {
       "session_id": current.session_id,
-      "position": position
+      "position": Number(position)
     }
   
     generic(current.grew_back_url, "select_normal_form", param)
@@ -695,7 +695,7 @@ function select_rule(position) {
 
   let param = {
     "session_id": current.session_id,
-    "position": position
+    "position": Number(position)
   }
 
   generic(current.grew_back_url, "select_rule", param)
